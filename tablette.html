@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Le Nombre Vin">
+<title>Le Nombre Vin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;overflow-x:hidden;}
+body{background:#0f0a04;font-family:'Lato',sans-serif;color:#f5ede0;min-height:100vh;}
+.bg{position:fixed;inset:0;background:radial-gradient(ellipse at 20% 50%,rgba(139,69,19,.15) 0%,transparent 60%),radial-gradient(ellipse at 80% 20%,rgba(180,130,60,.08) 0%,transparent 50%);pointer-events:none;z-index:0;}
+.wrap{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:column;align-items:center;}
+header{width:100%;background:rgba(8,4,1,.85);backdrop-filter:blur(12px);border-bottom:1px solid rgba(180,130,60,.2);padding:16px 24px;display:flex;align-items:center;justify-content:space-between;}
+.brand{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:#c9922a;letter-spacing:.03em;}
+.brand-sub{font-size:10px;color:rgba(200,160,80,.45);display:block;font-family:'Lato',sans-serif;letter-spacing:.14em;text-transform:uppercase;margin-top:1px;}
+.dot{width:7px;height:7px;border-radius:50%;background:#5cb85c;display:inline-block;margin-right:5px;box-shadow:0 0 6px #5cb85c;}
+.conn{font-size:11px;color:rgba(200,160,80,.4);}
+main{width:100%;max-width:500px;padding:20px 18px 40px;flex:1;}
+.scr{display:none;}
+.scr.on{display:block;}
+
+/* Login */
+.hero{text-align:center;padding:28px 0 32px;}
+.wine-glyph{font-size:60px;display:block;margin-bottom:18px;animation:float 3s ease-in-out infinite;}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+.h1{font-family:'Playfair Display',serif;font-size:30px;font-weight:700;color:#e8c87a;line-height:1.25;margin-bottom:8px;}
+.h2{font-size:12px;color:rgba(200,160,80,.5);letter-spacing:.12em;text-transform:uppercase;margin-bottom:36px;}
+.card{background:rgba(20,12,4,.75);border:1px solid rgba(180,130,60,.2);border-radius:16px;padding:24px 20px;margin-bottom:14px;backdrop-filter:blur(8px);}
+.lbl{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:rgba(200,160,80,.6);display:block;margin-bottom:7px;}
+.row{display:flex;gap:10px;margin-bottom:14px;}
+input[type=text],input[type=email],input[type=tel],input[type=date],select,textarea{width:100%;background:rgba(255,255,255,.05);border:1px solid rgba(180,130,60,.25);border-radius:10px;padding:14px 15px;font-size:16px;color:#f5ede0;font-family:'Lato',sans-serif;outline:none;transition:border-color .2s;-webkit-appearance:none;}
+input:focus,select:focus,textarea:focus{border-color:rgba(201,146,42,.6);background:rgba(255,255,255,.07);}
+input::placeholder,textarea::placeholder{color:rgba(200,160,80,.25);}
+select option{background:#1a0e04;color:#f5ede0;}
+.btn{width:100%;background:#8B4513;border:none;border-radius:12px;padding:16px;font-size:15px;font-weight:700;color:#fff8ee;cursor:pointer;letter-spacing:.05em;text-transform:uppercase;font-family:'Lato',sans-serif;transition:opacity .2s,transform .1s;}
+.btn:active{opacity:.85;transform:scale(.98);}
+.btn-g{background:transparent;border:1px solid rgba(180,130,60,.3);border-radius:10px;padding:10px 20px;font-size:12px;color:rgba(200,160,80,.7);cursor:pointer;font-family:'Lato',sans-serif;display:block;margin:10px auto 0;}
+
+/* Questions */
+.greet{background:rgba(139,69,19,.18);border:1px solid rgba(180,130,60,.25);border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:13px;margin-bottom:20px;}
+.av{width:42px;height:42px;border-radius:50%;background:#8B4513;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;color:#fff8ee;flex-shrink:0;}
+.gname{font-size:15px;font-weight:700;color:#e8c87a;}
+.gsub{font-size:11px;color:rgba(200,160,80,.55);margin-top:2px;}
+.hist{background:rgba(20,12,4,.6);border:1px solid rgba(180,130,60,.15);border-radius:10px;padding:10px 14px;margin-bottom:16px;}
+.hist-t{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:rgba(200,160,80,.45);margin-bottom:7px;}
+.hist-row{font-size:12px;color:rgba(200,160,80,.65);padding:3px 0;border-bottom:1px solid rgba(180,130,60,.08);}
+.hist-row:last-child{border-bottom:none;}
+.slbl{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:rgba(200,160,80,.45);margin-bottom:10px;}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px;}
+.chip{background:rgba(20,12,4,.8);border:1px solid rgba(180,130,60,.2);border-radius:100px;padding:10px 16px;font-size:13px;color:rgba(200,160,80,.75);cursor:pointer;font-family:'Lato',sans-serif;transition:all .2s;}
+.chip.on{background:rgba(139,69,19,.45);border-color:#c9922a;color:#f5e4b0;font-weight:700;}
+.buds{display:flex;gap:7px;margin-bottom:20px;flex-wrap:wrap;}
+.bud{flex:1;min-width:68px;background:rgba(20,12,4,.8);border:1px solid rgba(180,130,60,.2);border-radius:11px;padding:12px 7px;text-align:center;cursor:pointer;font-family:'Lato',sans-serif;transition:all .2s;}
+.bud.on{background:rgba(139,69,19,.45);border-color:#c9922a;}
+.bud-v{font-size:12px;font-weight:700;color:#e8c87a;}
+.bud-l{font-size:9px;color:rgba(200,160,80,.45);margin-top:2px;text-transform:uppercase;letter-spacing:.06em;}
+textarea{resize:none;height:72px;margin-bottom:16px;}
+
+/* Confirm */
+.conf-ico{text-align:center;font-size:54px;margin:18px 0 12px;}
+.conf-t{font-family:'Playfair Display',serif;font-size:24px;color:#e8c87a;text-align:center;margin-bottom:6px;}
+.conf-s{font-size:12px;color:rgba(200,160,80,.5);text-align:center;margin-bottom:24px;}
+.sum{background:rgba(20,12,4,.8);border:1px solid rgba(180,130,60,.18);border-radius:13px;padding:16px 18px;margin-bottom:16px;}
+.sum-row{display:flex;justify-content:space-between;align-items:baseline;padding:7px 0;border-bottom:1px solid rgba(180,130,60,.07);font-size:12px;}
+.sum-row:last-child{border-bottom:none;}
+.sum-k{color:rgba(200,160,80,.55);}
+.sum-v{color:#e8c87a;font-weight:700;text-align:right;max-width:60%;}
+.notif{background:rgba(139,69,19,.18);border:1px solid rgba(180,130,60,.25);border-radius:9px;padding:11px 14px;font-size:11px;color:rgba(200,160,80,.6);text-align:center;margin-bottom:14px;}
+
+/* Loading */
+.loading{text-align:center;padding:40px;color:rgba(200,160,80,.5);font-size:13px;}
+
+/* Offline banner */
+.offline-banner{background:#c0392b;color:#fff;text-align:center;padding:8px;font-size:12px;font-weight:700;display:none;}
+.offline-banner.show{display:block;}
+</style>
+</head>
+<body>
+<div class="offline-banner" id="offline-banner">⚠️ Hors ligne — les données seront synchronisées à la reconnexion</div>
+<div class="bg"></div>
+<div class="wrap">
+  <header>
+    <div class="brand">Le Nombre Vin<span class="brand-sub">Espace client</span></div>
+    <div><span class="dot"></span><span class="conn" id="conn-status">Connecté</span></div>
+  </header>
+  <main>
+
+    <!-- LOGIN -->
+    <div id="s-login" class="scr on">
+      <div class="hero">
+        <span class="wine-glyph">🍷</span>
+        <div class="h1">Bienvenue au<br>Nombre Vin</div>
+        <div class="h2">Identifiez-vous pour un accueil personnalisé</div>
+      </div>
+      <div class="card">
+        <span class="lbl">Votre prénom et nom</span>
+        <div class="row">
+          <input type="text" id="i-prenom" placeholder="Prénom" style="flex:1">
+          <input type="text" id="i-nom" placeholder="Nom" style="flex:1">
+        </div>
+        <button class="btn" onclick="doLogin()">Entrer ›</button>
+      </div>
+      <button class="btn-g" onclick="demoLogin()">Démonstration</button>
+    </div>
+
+    <!-- QUESTIONS -->
+    <div id="s-questions" class="scr">
+      <div class="greet" id="greet-bar">
+        <div class="av" id="av-ini">JD</div>
+        <div><div class="gname" id="greet-name">Jean Dupont</div><div class="gsub" id="greet-sub">Bienvenue !</div></div>
+      </div>
+      <div id="hist-section"></div>
+      <div class="card">
+        <div class="slbl">Quelle est l'occasion ?</div>
+        <div class="chips" id="cg-occ">
+          <div class="chip" onclick="sel(this,'occ')">🎁 Cadeau</div>
+          <div class="chip" onclick="sel(this,'occ')">🍽️ Dîner famille</div>
+          <div class="chip" onclick="sel(this,'occ')">🥂 Apéritif</div>
+          <div class="chip" onclick="sel(this,'occ')">💼 Repas d'affaires</div>
+          <div class="chip" onclick="sel(this,'occ')">❤️ Soirée romantique</div>
+          <div class="chip" onclick="sel(this,'occ')">🎉 Anniversaire</div>
+          <div class="chip" onclick="sel(this,'occ')">🏠 Cave perso</div>
+        </div>
+        <div class="slbl">Type de vin</div>
+        <div class="chips" id="cg-type">
+          <div class="chip" onclick="sel(this,'type')">🔴 Rouge</div>
+          <div class="chip" onclick="sel(this,'type')">⚪ Blanc</div>
+          <div class="chip" onclick="sel(this,'type')">🌸 Rosé</div>
+          <div class="chip" onclick="sel(this,'type')">✨ Pétillant</div>
+          <div class="chip" onclick="sel(this,'type')">🍯 Doux</div>
+          <div class="chip" onclick="sel(this,'type')">❓ Conseil vendeur</div>
+        </div>
+        <div class="slbl">Accord mets</div>
+        <div class="chips" id="cg-plat">
+          <div class="chip" onclick="sel(this,'plat')">🐟 Poisson</div>
+          <div class="chip" onclick="sel(this,'plat')">🥩 Viande rouge</div>
+          <div class="chip" onclick="sel(this,'plat')">🐓 Volaille</div>
+          <div class="chip" onclick="sel(this,'plat')">🧀 Fromage</div>
+          <div class="chip" onclick="sel(this,'plat')">🍝 Pasta/Végé</div>
+          <div class="chip" onclick="sel(this,'plat')">🦪 Fruits de mer</div>
+          <div class="chip" onclick="sel(this,'plat')">🍮 Dessert</div>
+          <div class="chip" onclick="sel(this,'plat')">Sans repas précis</div>
+        </div>
+        <div class="slbl">Budget par bouteille</div>
+        <div class="buds" id="bg-bud">
+          <div class="bud" onclick="selBud(this,'<15€')"><div class="bud-v">&lt;15€</div><div class="bud-l">Quotidien</div></div>
+          <div class="bud" onclick="selBud(this,'15-30€')"><div class="bud-v">15-30€</div><div class="bud-l">Plaisir</div></div>
+          <div class="bud" onclick="selBud(this,'30-60€')"><div class="bud-v">30-60€</div><div class="bud-l">Exception</div></div>
+          <div class="bud" onclick="selBud(this,'60-150€')"><div class="bud-v">60-150€</div><div class="bud-l">Prestige</div></div>
+          <div class="bud" onclick="selBud(this,'>150€')"><div class="bud-v">&gt;150€</div><div class="bud-l">Grand cru</div></div>
+        </div>
+        <div class="slbl">Note libre (optionnel)</div>
+        <textarea id="i-note" placeholder="Ex : un Bourgogne similaire à la dernière fois…"></textarea>
+        <button class="btn" onclick="doSubmit()">Prévenir mon conseiller ›</button>
+      </div>
+    </div>
+
+    <!-- CONFIRM -->
+    <div id="s-confirm" class="scr">
+      <div class="conf-ico">✅</div>
+      <div class="conf-t">Votre conseiller<br>vous attend !</div>
+      <div class="conf-s">Vos préférences ont été transmises en temps réel</div>
+      <div class="sum" id="sum-card"></div>
+      <div class="notif">🔔 Un conseiller viendra vous accueillir sous peu</div>
+      <button class="btn" onclick="doReset()">Nouvelle identification</button>
+    </div>
+
+  </main>
+</div>
+
+<!-- Firebase -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getDatabase, ref, set, get, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCRc2sDM4TrwjLduJT4baKbErLvdnK-fTU",
+  authDomain: "le-nombre-vin.firebaseapp.com",
+  databaseURL: "https://le-nombre-vin-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "le-nombre-vin",
+  storageBucket: "le-nombre-vin.firebasestorage.app",
+  messagingSenderId: "197178474175",
+  appId: "1:197178474175:web:8824331995566c488a100a"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+window._fbdb = db;
+window._fbref = ref;
+window._fbset = set;
+window._fbget = get;
+
+// Connexion status
+window.addEventListener('online', () => { document.getElementById('conn-status').textContent = 'Connecté'; document.getElementById('offline-banner').classList.remove('show'); });
+window.addEventListener('offline', () => { document.getElementById('conn-status').textContent = 'Hors ligne'; document.getElementById('offline-banner').classList.add('show'); });
+
+window._fbReady = true;
+console.log('Firebase prêt');
+</script>
+
+<script>
+const ss = {occ:null,type:null,plat:null,budget:null};
+let curUser = null;
+
+function ini(p,n){return((p[0]||'')+(n[0]||'')).toUpperCase();}
+function fd(s){if(!s)return'—';try{return new Date(s).toLocaleDateString('fr-FR',{day:'2-digit',month:'short',year:'numeric'});}catch(e){return s;}}
+
+async function getClient(key){
+  if(!window._fbdb) return null;
+  try {
+    const snap = await window._fbget(window._fbref(window._fbdb,'clients/'+key));
+    return snap.exists() ? snap.val() : null;
+  } catch(e){ return null; }
+}
+
+async function saveClient(key, data){
+  if(!window._fbdb) return;
+  try { await window._fbset(window._fbref(window._fbdb,'clients/'+key), data); } catch(e){ console.error(e); }
+}
+
+async function saveVisit(visit){
+  if(!window._fbdb) return;
+  try { await window._fbset(window._fbref(window._fbdb,'pending_visit'), visit); } catch(e){ console.error(e); }
+}
+
+async function doLogin(){
+  const p = document.getElementById('i-prenom').value.trim();
+  const n = document.getElementById('i-nom').value.trim();
+  if(!p||!n){alert('Merci de saisir votre prénom et nom.');return;}
+  await loginUser(p,n);
+}
+
+async function demoLogin(){ await loginUser('Marie','Laurent'); }
+
+async function loginUser(p,n){
+  const key = (p+'_'+n).toLowerCase().replace(/\s+/g,'_').replace(/[^a-z0-9_]/g,'');
+  showScr('s-questions');
+  document.getElementById('av-ini').textContent = ini(p,n);
+  document.getElementById('greet-name').textContent = p+' '+n;
+  document.getElementById('greet-sub').textContent = 'Chargement…';
+
+  let client = await getClient(key);
+  if(!client){
+    client = {prenom:p,nom:n,key,visites:0,historique:[],achats:[],createdAt:new Date().toISOString()};
+  }
+  curUser = client;
+
+  const v = client.visites||0;
+  document.getElementById('greet-sub').textContent = v===0?'Première visite · Bienvenue !':v===1?'Client · 1 visite':('Client fidèle · '+v+' visites');
+
+  const achats = client.achats||[];
+  const hs = document.getElementById('hist-section');
+  if(achats.length){
+    const last = [...achats].reverse().slice(0,3);
+    hs.innerHTML = '<div class="hist"><div class="hist-t">🍷 Vos derniers achats</div>'+last.map(a=>'<div class="hist-row">'+fd(a.date)+' · '+a.vin+(a.prix?' · '+a.prix+'€':'')+'</div>').join('')+'</div>';
+  } else hs.innerHTML='';
+}
+
+function sel(el,grp){
+  document.querySelectorAll('#cg-'+grp+' .chip').forEach(c=>c.classList.remove('on'));
+  el.classList.add('on'); ss[grp]=el.textContent.trim();
+}
+function selBud(el,v){
+  document.querySelectorAll('#bg-bud .bud').forEach(c=>c.classList.remove('on'));
+  el.classList.add('on'); ss.budget=v;
+}
+
+async function doSubmit(){
+  if(!ss.occ&&!ss.type){alert('Sélectionnez au moins une occasion ou un type de vin.');return;}
+  if(!curUser){alert('Erreur: client non identifié.');return;}
+  const note = document.getElementById('i-note').value.trim();
+  const visit = {
+    id: Date.now(), userId: curUser.key,
+    prenom: curUser.prenom, nom: curUser.nom,
+    timestamp: new Date().toISOString(),
+    occasion: ss.occ, type: ss.type, plat: ss.plat,
+    budget: ss.budget, note, status:'pending'
+  };
+
+  curUser.visites = (curUser.visites||0)+1;
+  curUser.lastVisit = new Date().toISOString().slice(0,10);
+  if(!curUser.historique) curUser.historique=[];
+  curUser.historique.push({timestamp:visit.timestamp,occasion:ss.occ,type:ss.type,plat:ss.plat,budget:ss.budget,note});
+
+  await saveClient(curUser.key, curUser);
+  await saveVisit(visit);
+
+  const card = document.getElementById('sum-card');
+  card.innerHTML = [['Client',curUser.prenom+' '+curUser.nom],['Occasion',ss.occ||'—'],['Vin',ss.type||'—'],['Accord',ss.plat||'—'],['Budget',ss.budget||'—'],['Note',note||'—']].map(([k,v])=>'<div class="sum-row"><span class="sum-k">'+k+'</span><span class="sum-v">'+v+'</span></div>').join('');
+  showScr('s-confirm');
+}
+
+function doReset(){
+  curUser=null;
+  Object.keys(ss).forEach(k=>ss[k]=null);
+  ['i-prenom','i-nom','i-note'].forEach(id=>document.getElementById(id).value='');
+  document.querySelectorAll('.chip,.bud').forEach(c=>c.classList.remove('on'));
+  showScr('s-login');
+}
+
+function showScr(id){
+  document.querySelectorAll('.scr').forEach(s=>s.classList.remove('on'));
+  document.getElementById(id).classList.add('on');
+  window.scrollTo(0,0);
+}
+
+window.doLogin=doLogin; window.demoLogin=demoLogin;
+window.doSubmit=doSubmit; window.doReset=doReset;
+window.sel=sel; window.selBud=selBud;
+</script>
+</body>
+</html>
