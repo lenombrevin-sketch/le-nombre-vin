@@ -240,15 +240,34 @@ textarea{resize:none;height:72px;margin-bottom:16px;}
 .cstat-l{font-size:10px;color:rgba(201,146,42,.45);margin-top:2px;text-transform:uppercase;letter-spacing:.06em;}
 
 /* BOUTON QUITTER */
-.btn-quit{position:fixed;top:14px;right:16px;z-index:999;background:rgba(139,69,19,.25);border:1px solid rgba(201,146,42,.3);border-radius:100px;padding:7px 16px;font-size:12px;font-weight:700;color:rgba(201,146,42,.7);cursor:pointer;font-family:'Lato',sans-serif;transition:all .2s;display:none;backdrop-filter:blur(8px);}
-.btn-quit:active{background:rgba(139,69,19,.5);color:#f0e6d0;}
+.btn-quit{position:fixed;top:calc(env(safe-area-inset-top, 0px) + 12px);right:16px;z-index:9999;background:rgba(20,10,2,.75);border:1px solid rgba(201,146,42,.4);border-radius:100px;padding:8px 16px;font-size:12px;font-weight:700;color:rgba(201,146,42,.8);cursor:pointer;font-family:'Lato',sans-serif;transition:all .2s;display:none;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);box-shadow:0 2px 12px rgba(0,0,0,.4);}
+.btn-quit:active{background:rgba(139,69,19,.6);color:#f0e6d0;transform:scale(.96);}
 .btn-quit.show{display:block;}
+/* QUIT MODAL */
+.quit-modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:99999;align-items:center;justify-content:center;-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);}
+.quit-modal-bg.show{display:flex;}
+.quit-modal{background:#1a0e06;border:1px solid rgba(201,146,42,.3);border-radius:18px;padding:28px 24px;width:85%;max-width:320px;text-align:center;}
+.qm-title{font-family:'Playfair Display',serif;font-size:18px;color:#f0e6d0;margin-bottom:8px;}
+.qm-sub{font-size:13px;color:rgba(201,146,42,.55);margin-bottom:22px;}
+.qm-btns{display:flex;gap:10px;}
+.qm-yes{flex:1;background:#8B4513;border:none;border-radius:10px;padding:13px;font-size:13px;font-weight:700;color:#fff8ee;cursor:pointer;font-family:'Lato',sans-serif;}
+.qm-no{flex:1;background:transparent;border:1px solid rgba(201,146,42,.25);border-radius:10px;padding:13px;font-size:13px;color:rgba(201,146,42,.6);cursor:pointer;font-family:'Lato',sans-serif;}
 </style>
 </head>
 <body>
 <div class="bg"></div>
 <div class="wrap">
   <button class="btn-quit" id="btn-quit" onclick="doQuit()">✕ Quitter</button>
+  <div class="quit-modal-bg" id="quit-modal-bg">
+    <div class="quit-modal">
+      <div class="qm-title">Quitter ?</div>
+      <div class="qm-sub">Revenir à l’écran d’accueil</div>
+      <div class="qm-btns">
+        <button class="qm-yes" onclick="confirmQuit()">Oui, quitter</button>
+        <button class="qm-no" onclick="cancelQuit()">Annuler</button>
+      </div>
+    </div>
+  </div>
   <main>
 
     <!-- LOGIN -->
@@ -778,9 +797,14 @@ function doReset(){
 
 
 function doQuit(){
-  if(confirm('Revenir à l’accueil ?')){
-    doReset();
-  }
+  document.getElementById('quit-modal-bg').classList.add('show');
+}
+function confirmQuit(){
+  document.getElementById('quit-modal-bg').classList.remove('show');
+  doReset();
+}
+function cancelQuit(){
+  document.getElementById('quit-modal-bg').classList.remove('show');
 }
 
 // Show/hide quit button based on current screen
@@ -1343,7 +1367,7 @@ window.addEventListener('load', () => {
 
 window.doLogin=doLogin;window.demoLogin=demoLogin;window.doReset=doReset;window.doSubmit=doSubmit;
 window.sel=sel;window.selBud=selBud;window.selCiv=selCiv;window.selMode=selMode;window.doMode=doMode;
-window.afterQuestions=afterQuestions;window.setScore=setScore;window.submitScore=submitScore;window.openScoring=openScoring;window.showMesAvis=showMesAvis;window.loadEvents=loadEvents;window.filterEvts=filterEvts;window.inscrireEvent=inscrireEvent;window.showMaCave=showMaCave;window.doQuit=doQuit;window.searchCaveWine=searchCaveWine;window.selectCaveWine=selectCaveWine;window.setAddScore=setAddScore;window.cancelCaveAdd=cancelCaveAdd;window.addToCavePerso=addToCavePerso;window.filterCave=filterCave;window.openPersonalScoring=openPersonalScoring;window.doWineChoice=doWineChoice;window.selectWineChoice=selectWineChoice;window.buildWineChoices=buildWineChoices;window.selHeure=selHeure;window.showScr=showScr;window.copyLink=copyLink;
+window.afterQuestions=afterQuestions;window.setScore=setScore;window.submitScore=submitScore;window.openScoring=openScoring;window.showMesAvis=showMesAvis;window.loadEvents=loadEvents;window.filterEvts=filterEvts;window.inscrireEvent=inscrireEvent;window.showMaCave=showMaCave;window.doQuit=doQuit;window.confirmQuit=confirmQuit;window.cancelQuit=cancelQuit;window.searchCaveWine=searchCaveWine;window.selectCaveWine=selectCaveWine;window.setAddScore=setAddScore;window.cancelCaveAdd=cancelCaveAdd;window.addToCavePerso=addToCavePerso;window.filterCave=filterCave;window.openPersonalScoring=openPersonalScoring;window.doWineChoice=doWineChoice;window.selectWineChoice=selectWineChoice;window.buildWineChoices=buildWineChoices;window.selHeure=selHeure;window.showScr=showScr;window.copyLink=copyLink;
 </script>
 </body>
 </html>
