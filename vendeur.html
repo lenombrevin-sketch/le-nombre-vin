@@ -539,8 +539,19 @@ let panier=[],wTimeout=null;
 
 function wk(n){return n.replace(/[^a-z0-9]/gi,'_').toLowerCase().slice(0,40);}
 function wd(w){const k=wk(w[0]),s=window._caveSettings[k]||{};
-  return{nom:w[0],prix_base:w[1],type:w[2],region:w[3],key:k,prix:s.prix_override??w[1],stars:s.stars||0,hidden:s.hidden||false,nouveaute:s.nouveaute||false};}
-function activeWines(){return WINES.map(w=>wd(w)).filter(w=>!w.hidden);}
+  const cr=s.clientRatings||null;
+  return{nom:s.nom_override||w[0],prix_base:w[1],type:s.type_override||w[2],region:s.region_override||w[3],
+    key:k,prix:s.prix_override??w[1],stars:s.stars||0,hidden:s.hidden||false,nouveaute:s.nouveaute||false,
+    clientAvg:cr?cr.avg:0,clientCount:cr?cr.count:0};}
+function activeWines(){
+  const base=WINES.map(w=>wd(w)).filter(w=>!w.hidden);
+  const arts=Object.values(window._articles||{}).filter(a=>!a.hidden).map(a=>{
+    return{nom:a.nom,prix_base:a.prix,type:a.type,region:a.region||'France',
+      key:a.id,prix:a.prix,stars:a.stars||0,hidden:false,nouveaute:a.nouveaute||false,
+      clientAvg:0,clientCount:0,isCustom:true};
+  });
+  return [...base,...arts];
+}
 function ini(p,n){return((p[0]||'')+(n[0]||'')).toUpperCase();}
 function fd(s){if(!s)return'—';try{return new Date(s).toLocaleDateString('fr-FR',{day:'2-digit',month:'short',year:'numeric'});}catch(e){return s;}}
 function ts(iso){if(!iso)return'—';const d=Date.now()-new Date(iso).getTime(),m=Math.floor(d/60000);if(m<1)return'À l\'instant';if(m<60)return m+'min';const h=Math.floor(m/60);return h<24?h+'h':Math.floor(h/24)+'j';}
@@ -1136,17 +1147,17 @@ async function deleteEvent(id){
 /* ARTICLES LIBRES */
 window._articles = {};
 
-function toggleArtForm(){{
+function toggleArtForm(){
   const f=document.getElementById('art-form');
   f.style.display=f.style.display==='none'?'block':'none';
-}}
+}
 
-async function createArticle(){{
+async function createArticle(){
   const nom=document.getElementById('af-nom').value.trim();
   const prix=parseFloat(document.getElementById('af-prix').value);
-  if(!nom||isNaN(prix)||prix<0){{alert('Nom et prix requis.');return;}}
+  if(!nom||isNaN(prix)||prix<0){alert('Nom et prix requis.');return;}
   const id='art_'+Date.now();
-  const art={{
+  const art={
     id,nom,
     type:document.getElementById('af-type').value,
     region:document.getElementById('af-region').value.trim()||'France',
@@ -1155,66 +1166,66 @@ async function createArticle(){{
     nouveaute:document.getElementById('af-nouv').checked,
     hidden:false,
     createdAt:new Date().toISOString()
-  }};
-  try{{
+  };
+  try{
     await window._set(window._ref(window._db,'articles/'+id),art);
-    ['af-nom','af-region','af-prix'].forEach(id=>{{const e=document.getElementById(id);if(e)e.value='';}});
+    ['af-nom','af-region','af-prix'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
     document.getElementById('af-stars').value='0';
     document.getElementById('af-nouv').checked=false;
     document.getElementById('art-form').style.display='none';
     rdrArticlesLibres();rdrCaveStats();
     alert('✅ Article créé !');
-  }}catch(e){{alert('Erreur : '+e.message);}}
-}}
+  }catch(e){alert('Erreur : '+e.message);}
+}
 
-function rdrArticlesLibres(){{
-  const arts=Object.values(window._articles||{{}});
+function rdrArticlesLibres(){
+  const arts=Object.values(window._articles||{});
   const el=document.getElementById('articles-libres-list');
   if(!el)return;
-  if(!arts.length){{
+  if(!arts.length){
     el.innerHTML='<div style="text-align:center;padding:16px;color:#a07040;font-size:12px;">Aucun article libre créé</div>';
     return;
-  }}
+  }
   el.innerHTML=`<div class="wine-table-wrap"><table class="wt">
     <thead><tr>
       <th>Article</th><th>Type</th><th>Région</th><th>Prix</th>
       <th>Priorité</th><th>Nouv.</th><th>Visible</th><th></th>
     </tr></thead>
-    <tbody>${{arts.map(a=>{{
+    <tbody>${arts.map(a=>{
       const stars=a.stars||0;
-      const sH=Array.from({{length:5}},(_,i)=>`<span style="color:${{i<stars?'#c9922a':'#e8d8b8'}};font-size:13px;">★</span>`).join('');
-      return`<tr class="${{a.hidden?'hw':''}}">
-        <td><div class="wine-name" style="max-width:160px;">${{a.nom}}</div><span class="art-badge">Libre</span></td>
-        <td><span class="tag" style="font-size:10px">${{a.type}}</span></td>
-        <td style="font-size:11px;color:#a07040">${{a.region||'—'}}</td>
-        <td style="font-weight:700;color:#8B4513">${{a.prix}}€</td>
-        <td><div style="display:flex;gap:1px">${{sH}}</div></td>
-        <td><button class="nouv-toggle ${{a.nouveaute?'on':'off'}}" onclick="toggleArtNouv('${{a.id}}',${{!a.nouveaute}})"></button></td>
-        <td><button class="toggle-btn ${{a.hidden?'off':'on'}}" onclick="toggleArtHidden('${{a.id}}',${{!a.hidden}})"></button></td>
-        <td><button class="vb-g" style="font-size:10px;padding:4px 8px;" onclick="openEditModal('${{a.id}}','article')">✏️</button></td>
+      const sH=Array.from({length:5},(_,i)=>`<span style="color:${i<stars?'#c9922a':'#e8d8b8'};font-size:13px;">★</span>`).join('');
+      return`<tr class="${a.hidden?'hw':''}">
+        <td><div class="wine-name" style="max-width:160px;">${a.nom}</div><span class="art-badge">Libre</span></td>
+        <td><span class="tag" style="font-size:10px">${a.type}</span></td>
+        <td style="font-size:11px;color:#a07040">${a.region||'—'}</td>
+        <td style="font-weight:700;color:#8B4513">${a.prix}€</td>
+        <td><div style="display:flex;gap:1px">${sH}</div></td>
+        <td><button class="nouv-toggle ${a.nouveaute?'on':'off'}" onclick="toggleArtNouv('${a.id}',${!a.nouveaute})"></button></td>
+        <td><button class="toggle-btn ${a.hidden?'off':'on'}" onclick="toggleArtHidden('${a.id}',${!a.hidden})"></button></td>
+        <td><button class="vb-g" style="font-size:10px;padding:4px 8px;" onclick="openEditModal('${a.id}','article')">✏️</button></td>
       </tr>`;
-    }}).join('')}}</tbody>
+    }).join('')}</tbody>
   </table></div>`;
-}}
+}
 
-async function toggleArtNouv(id,val){{
-  try{{await window._set(window._ref(window._db,'articles/'+id+'/nouveaute'),val);}}catch(e){{}}
-}}
-async function toggleArtHidden(id,val){{
-  try{{await window._set(window._ref(window._db,'articles/'+id+'/hidden'),val);rdrCaveStats();}}catch(e){{}}
-}}
+async function toggleArtNouv(id,val){
+  try{await window._set(window._ref(window._db,'articles/'+id+'/nouveaute'),val);}catch(e){}
+}
+async function toggleArtHidden(id,val){
+  try{await window._set(window._ref(window._db,'articles/'+id+'/hidden'),val);rdrCaveStats();}catch(e){}
+}
 
 /* MODAL ÉDITION INLINE — catalogue + articles */
 let _editTarget = null;
 
-function openEditModal(keyOrId, source){{
-  _editTarget = {{key:keyOrId, source}};
+function openEditModal(keyOrId, source){
+  _editTarget = {key:keyOrId, source};
   const modal=document.getElementById('edit-modal-bg');
   const delBtn=document.getElementById('em-del-btn');
   document.getElementById('em-key').value=keyOrId;
   document.getElementById('em-source').value=source;
 
-  if(source==='article'){{
+  if(source==='article'){
     const a=window._articles[keyOrId];
     if(!a)return;
     document.getElementById('edit-modal-title').textContent='Modifier l\'article';
@@ -1226,10 +1237,10 @@ function openEditModal(keyOrId, source){{
     document.getElementById('em-nouv').checked=a.nouveaute||false;
     document.getElementById('em-hidden').checked=a.hidden||false;
     delBtn.style.display='inline';
-  }} else {{
+  } else {
     // Catalogue wine — find base data
     const w=WINES.find(x=>x[0].replace(/[^a-z0-9]/gi,'_').toLowerCase().slice(0,40)===keyOrId);
-    const s=window._caveSettings[keyOrId]||{{}};
+    const s=window._caveSettings[keyOrId]||{};
     document.getElementById('edit-modal-title').textContent='Modifier le vin';
     document.getElementById('em-nom').value=s.nom_override||w?.[0]||'';
     document.getElementById('em-type').value=s.type_override||w?.[2]||'Rouge';
@@ -1239,30 +1250,30 @@ function openEditModal(keyOrId, source){{
     document.getElementById('em-nouv').checked=s.nouveaute||false;
     document.getElementById('em-hidden').checked=s.hidden||false;
     delBtn.style.display='none'; // On ne supprime pas le catalogue de base
-  }}
+  }
   modal.classList.add('show');
-}}
+}
 
-async function saveEditModal(){{
+async function saveEditModal(){
   const key=document.getElementById('em-key').value;
   const source=document.getElementById('em-source').value;
   const nom=document.getElementById('em-nom').value.trim();
   const prix=parseFloat(document.getElementById('em-prix').value);
-  if(!nom||isNaN(prix)){{alert('Nom et prix requis.');return;}}
-  if(source==='article'){{
-    try{{
-      await window._set(window._ref(window._db,'articles/'+key),{{
+  if(!nom||isNaN(prix)){alert('Nom et prix requis.');return;}
+  if(source==='article'){
+    try{
+      await window._set(window._ref(window._db,'articles/'+key),{
         ...window._articles[key],
         nom, type:document.getElementById('em-type').value,
         region:document.getElementById('em-region').value.trim(),
         prix, stars:parseInt(document.getElementById('em-stars').value)||0,
         nouveaute:document.getElementById('em-nouv').checked,
         hidden:document.getElementById('em-hidden').checked,
-      }});
-    }}catch(e){{alert('Erreur : '+e.message);return;}}
-  }} else {{
+      });
+    }catch(e){alert('Erreur : '+e.message);return;}
+  } else {
     // Save overrides in cave_settings
-    const merged={{...(window._caveSettings[key]||{{}})}};
+    const merged={...(window._caveSettings[key]||{})};
     merged.nom_override=nom;
     merged.type_override=document.getElementById('em-type').value;
     merged.region_override=document.getElementById('em-region').value.trim();
@@ -1270,28 +1281,28 @@ async function saveEditModal(){{
     merged.stars=parseInt(document.getElementById('em-stars').value)||0;
     merged.nouveaute=document.getElementById('em-nouv').checked;
     merged.hidden=document.getElementById('em-hidden').checked;
-    try{{
+    try{
       await window._set(window._ref(window._db,'cave_settings/'+key),merged);
-      caveChanges={{}};
-    }}catch(e){{alert('Erreur : '+e.message);return;}}
-  }}
+      caveChanges={};
+    }catch(e){alert('Erreur : '+e.message);return;}
+  }
   closeEditModal();rdrCave();rdrArticlesLibres();rdrCaveStats();
-}}
+}
 
-async function deleteArticle(){{
+async function deleteArticle(){
   const key=document.getElementById('em-key').value;
   if(!confirm('Supprimer cet article ?'))return;
-  try{{
+  try{
     await window._set(window._ref(window._db,'articles/'+key),null);
     closeEditModal();rdrArticlesLibres();rdrCaveStats();
-  }}catch(e){{alert('Erreur : '+e.message);}}
-}}
+  }catch(e){alert('Erreur : '+e.message);}
+}
 
-function closeEditModal(e){{
+function closeEditModal(e){
   if(e&&e.target!==document.getElementById('edit-modal-bg'))return;
   document.getElementById('edit-modal-bg').classList.remove('show');
   _editTarget=null;
-}}
+}
 
 window.sw=sw;window.showF=showF;window.clearV=clearV;window.searchW=searchW;window.selW=selW;
 window.addCart=addCart;window.addCartManual=addCartManual;window.delCart=delCart;window.validerAchats=validerAchats;
