@@ -909,7 +909,7 @@ function showMesAvis() {
   const achats = (curUser?.achats || []);
   const el = document.getElementById('achats-list-scoring');
   if(!achats.length) {
-    el.innerHTML = '<div style="text-align:center;padding:32px;color:rgba(201,146,42,.4);font-size:13px;">Aucun achat enregistré pour l'instant</div>';
+    el.innerHTML = '<div style="text-align:center;padding:32px;color:rgba(201,146,42,.4);font-size:13px;">Aucun achat enregistré pour l’instant</div>';
   } else {
     el.innerHTML = [...achats].reverse().map((a, i) => {
       const realIdx = achats.length - 1 - i;
@@ -1283,6 +1283,41 @@ window._submitScoreCavePerso = async function(){
   if(scoringReturnScreen==='s-ma-cave') renderCavePerso();
   showScr(scoringReturnScreen);
 };
+
+
+// Auto-login from URL parameter ?client=key
+async function checkUrlParam() {
+  const params = new URLSearchParams(window.location.search);
+  const clientKey = params.get('client');
+  const clientEmail = params.get('email');
+  if(clientKey) {
+    // Direct client key login
+    try {
+      const snap = await window._get(window._ref(window._db, 'clients/' + clientKey));
+      if(snap.exists()) {
+        const client = snap.val();
+        // Auto select civilite
+        const civBtn = document.querySelector(client.civilite==='Mme'?'.civ-btn:last-child':'.civ-btn');
+        if(civBtn) { civBtn.classList.add('on'); selCivValue = client.civilite||'M.'; }
+        document.getElementById('i-prenom').value = client.prenom||'';
+        document.getElementById('i-nom').value = client.nom||'';
+        await loginUser(client.civilite||'M.', client.prenom, client.nom);
+        return;
+      }
+    } catch(e) { console.error(e); }
+  }
+}
+
+// Run on load
+window.addEventListener('load', () => {
+  // Wait for Firebase to be ready
+  const wait = setInterval(() => {
+    if(window._fbReady) {
+      clearInterval(wait);
+      checkUrlParam();
+    }
+  }, 100);
+});
 
 window.doLogin=doLogin;window.demoLogin=demoLogin;window.doReset=doReset;window.doSubmit=doSubmit;
 window.sel=sel;window.selBud=selBud;window.selCiv=selCiv;window.selMode=selMode;window.doMode=doMode;
