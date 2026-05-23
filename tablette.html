@@ -240,9 +240,9 @@ textarea{resize:none;height:72px;margin-bottom:16px;}
 .cstat-l{font-size:10px;color:rgba(201,146,42,.45);margin-top:2px;text-transform:uppercase;letter-spacing:.06em;}
 
 /* BOUTON QUITTER */
-.btn-quit{position:fixed;top:calc(env(safe-area-inset-top, 0px) + 12px);right:16px;z-index:9999;background:rgba(20,10,2,.75);border:1px solid rgba(201,146,42,.4);border-radius:100px;padding:8px 16px;font-size:12px;font-weight:700;color:rgba(201,146,42,.8);cursor:pointer;font-family:'Lato',sans-serif;transition:all .2s;display:none;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);box-shadow:0 2px 12px rgba(0,0,0,.4);}
-.btn-quit:active{background:rgba(139,69,19,.6);color:#f0e6d0;transform:scale(.96);}
-.btn-quit.show{display:block;}
+.app-header{width:100%;background:rgba(8,4,1,.9);border-bottom:1px solid rgba(201,146,42,.2);padding:12px 18px;display:flex;align-items:center;justify-content:space-between;position:relative;z-index:10;-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);}
+.btn-quit-header{background:rgba(139,69,19,.3);border:1px solid rgba(201,146,42,.35);border-radius:100px;padding:7px 16px;font-size:12px;font-weight:700;color:rgba(201,146,42,.85);cursor:pointer;font-family:'Lato',sans-serif;-webkit-appearance:none;}
+.btn-quit-header:active{background:rgba(139,69,19,.6);}
 /* QUIT MODAL */
 .quit-modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:99999;align-items:center;justify-content:center;-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);}
 .quit-modal-bg.show{display:flex;}
@@ -252,12 +252,22 @@ textarea{resize:none;height:72px;margin-bottom:16px;}
 .qm-btns{display:flex;gap:10px;}
 .qm-yes{flex:1;background:#8B4513;border:none;border-radius:10px;padding:13px;font-size:13px;font-weight:700;color:#fff8ee;cursor:pointer;font-family:'Lato',sans-serif;}
 .qm-no{flex:1;background:transparent;border:1px solid rgba(201,146,42,.25);border-radius:10px;padding:13px;font-size:13px;color:rgba(201,146,42,.6);cursor:pointer;font-family:'Lato',sans-serif;}
+
+/* LOGIN MODES */
+.login-mode-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px;}
+.login-mode-card{background:rgba(255,255,255,.03);border:1px solid rgba(201,146,42,.18);border-radius:14px;padding:16px 12px;text-align:center;cursor:pointer;transition:all .2s;}
+.login-mode-card.on{background:rgba(139,69,19,.35);border-color:#c9922a;}
+.login-mode-card .lmc-icon{font-size:26px;margin-bottom:8px;display:block;}
+.login-mode-card .lmc-title{font-size:13px;font-weight:700;color:#f0e6d0;}
+.login-mode-card .lmc-sub{font-size:10px;color:rgba(201,146,42,.45);margin-top:3px;}
+.login-form-block{display:none;}
+.login-form-block.on{display:block;}
+.tel-not-found{background:rgba(180,60,60,.15);border:1px solid rgba(200,80,80,.3);border-radius:10px;padding:10px 14px;font-size:12px;color:rgba(255,150,150,.8);margin-top:10px;display:none;}
 </style>
 </head>
 <body>
 <div class="bg"></div>
 <div class="wrap">
-  <button class="btn-quit" id="btn-quit" onclick="doQuit()">✕ Quitter</button>
   <div class="quit-modal-bg" id="quit-modal-bg">
     <div class="quit-modal">
       <div class="qm-title">Quitter ?</div>
@@ -276,17 +286,46 @@ textarea{resize:none;height:72px;margin-bottom:16px;}
       <div class="login-tagline">Votre cave de caractère</div>
       <div class="divider"><span>Identifiez-vous</span></div>
       <div class="card">
-        <span class="lbl">Civilité</span>
-        <div class="civ-group" id="civ-group">
-          <button class="civ-btn" onclick="selCiv(this,'M.')">Monsieur</button>
-          <button class="civ-btn" onclick="selCiv(this,'Mme')">Madame</button>
+        <!-- Choix mode identification -->
+        <div class="login-mode-grid">
+          <div class="login-mode-card on" id="lm-nom" onclick="selLoginMode('nom')">
+            <span class="lmc-icon">✍️</span>
+            <div class="lmc-title">Nom &amp; prénom</div>
+            <div class="lmc-sub">Première visite ou nouveau client</div>
+          </div>
+          <div class="login-mode-card" id="lm-tel" onclick="selLoginMode('tel')">
+            <span class="lmc-icon">📱</span>
+            <div class="lmc-title">Téléphone</div>
+            <div class="lmc-sub">Accès rapide si déjà client</div>
+          </div>
         </div>
-        <span class="lbl">Prénom et nom</span>
-        <div class="row">
-          <input type="text" id="i-prenom" placeholder="Prénom">
-          <input type="text" id="i-nom" placeholder="Nom">
+
+        <!-- Form nom/prénom -->
+        <div class="login-form-block on" id="form-nom">
+          <span class="lbl">Civilité</span>
+          <div class="civ-group" id="civ-group">
+            <button class="civ-btn" onclick="selCiv(this,'M.')">Monsieur</button>
+            <button class="civ-btn" onclick="selCiv(this,'Mme')">Madame</button>
+          </div>
+          <span class="lbl">Prénom et nom</span>
+          <div class="row">
+            <input type="text" id="i-prenom" placeholder="Prénom">
+            <input type="text" id="i-nom" placeholder="Nom">
+          </div>
+          <span class="lbl" style="margin-top:4px;">Téléphone <span style="color:rgba(201,146,42,.35);font-size:10px;">(optionnel — pour une connexion rapide lors de vos prochaines visites)</span></span>
+          <input type="tel" id="i-tel-new" placeholder="06 12 34 56 78" style="margin-bottom:14px;">
+          <button class="btn-main" onclick="doLogin()">Entrer →</button>
         </div>
-        <button class="btn-main" onclick="doLogin()">Entrer →</button>
+
+        <!-- Form téléphone -->
+        <div class="login-form-block" id="form-tel">
+          <span class="lbl">Votre numéro de téléphone</span>
+          <input type="tel" id="i-tel-login" placeholder="06 12 34 56 78" style="margin-bottom:14px;">
+          <button class="btn-main" onclick="doLoginByTel()">Entrer →</button>
+          <div class="tel-not-found" id="tel-not-found">
+            Numéro non trouvé. Identifiez-vous par nom la première fois.
+          </div>
+        </div>
       </div>
       <button class="btn-ghost" onclick="demoLogin()">Démonstration</button>
     </div>
@@ -455,8 +494,10 @@ textarea{resize:none;height:72px;margin-bottom:16px;}
       <div id="tel-block" style="display:none;margin-top:16px;">
         <div class="card">
           <span class="lbl">Votre numéro de téléphone</span>
-          <input type="tel" id="i-tel" placeholder="06 12 34 56 78">
-          <div style="font-size:11px;color:rgba(201,146,42,.4);margin-top:8px;">Pour vous contacter en cas de besoin concernant votre commande</div>
+          <input type="tel" id="i-tel" placeholder="06 12 34 56 78" style="margin-bottom:12px;">
+          <span class="lbl">Votre email <span style="color:rgba(201,146,42,.35);font-size:10px;">(pour recevoir le lien de suivi)</span></span>
+          <input type="email" id="i-email" placeholder="votre@email.com">
+          <div style="font-size:11px;color:rgba(201,146,42,.4);margin-top:8px;">Nous vous enverrons un lien pour suivre l’état de votre commande</div>
         </div>
       </div>
       <button class="btn-main" style="margin-top:16px;" onclick="doMode()">Continuer →</button>
@@ -569,7 +610,10 @@ textarea{resize:none;height:72px;margin-bottom:16px;}
         <div id="suivi-block" style="display:none;" class="link-block">
           <div class="link-title">🔗 Votre lien de suivi de commande</div>
           <div class="link-url" id="suivi-url"></div>
-          <button class="btn-copy" onclick="copyLink()">📋 Copier le lien</button>
+          <div style="display:flex;gap:8px;margin-top:0;">
+            <button class="btn-copy" style="flex:1;" onclick="copyLink()">📋 Copier</button>
+            <button class="btn-copy" id="btn-email-suivi" style="flex:1;background:rgba(42,80,139,.25);border-color:rgba(100,140,220,.35);color:rgba(140,180,240,.9);" onclick="emailSuiviLink()">📧 Envoyer par mail</button>
+          </div>
         </div>
         <div class="notif" id="conf-notif">🔔 &nbsp;Un conseiller viendra vous accueillir sous peu</div>
         <button class="btn-main" onclick="doReset()" style="width:100%;margin-top:4px;">Nouvelle identification</button>
@@ -616,19 +660,25 @@ async function doLogin(){
   const p=document.getElementById('i-prenom').value.trim();
   const n=document.getElementById('i-nom').value.trim();
   if(!p||!n){alert('Merci de saisir votre prénom et nom.');return;}
-  await loginUser(selCivValue,p,n);
+  const tel=document.getElementById('i-tel-new')?.value.trim()||'';
+  await loginUser(selCivValue,p,n,tel);
 }
 async function demoLogin(){
   document.querySelectorAll('.civ-btn')[1].classList.add('on');
   selCivValue='Mme';await loginUser('Mme','Marie','Laurent');
 }
 
-async function loginUser(civ,p,n){
+async function loginUser(civ,p,n,tel){
   const key=(p+'_'+n).toLowerCase().replace(/\s+/g,'_').replace(/[^a-z0-9_]/g,'');
   let client=null;
   try{const snap=await window._get(window._ref(window._db,'clients/'+key));client=snap.exists()?snap.val():null;}catch(e){}
-  if(!client)client={prenom:p,nom:n,key,civilite:civ,visites:0,historique:[],achats:[],createdAt:new Date().toISOString()};
-  else client.civilite=civ;
+  if(!client){
+    client={prenom:p,nom:n,key,civilite:civ,visites:0,historique:[],achats:[],createdAt:new Date().toISOString()};
+    if(tel) client.tel=tel;
+  } else {
+    client.civilite=civ;
+    if(tel) client.tel=tel; // update if provided
+  }
   curUser=client;
   document.getElementById('q-av').textContent=ini(p,n);
   document.getElementById('q-name').textContent=civ+' '+n;
@@ -677,6 +727,8 @@ function doMode(){
     const tel=document.getElementById('i-tel').value.trim();
     if(!tel){alert('Merci de saisir votre numéro de téléphone.');return;}
     curUser.tel=tel;
+    const email=document.getElementById('i-email').value.trim();
+    if(email) curUser.email=email;
   }
   document.getElementById('q-sub').textContent=selMode_val==='magasin'?'Que cherchez-vous aujourd\'hui ?':'Décrivez votre commande';
   showScr('s-questions');
@@ -788,10 +840,13 @@ function copyLink(){
 function doReset(){
   curUser=null;selCivValue=null;selMode_val=null;selDate=null;selHeure_val=null;orderRef=null;selectedWine=null;
   Object.keys(ss).forEach(k=>ss[k]=null);
-  ['i-prenom','i-nom','i-note','i-tel'].forEach(id=>{const e=document.getElementById(id);if(e)e.value=''});
+  ['i-prenom','i-nom','i-note','i-tel','i-email'].forEach(id=>{const e=document.getElementById(id);if(e)e.value=''});
   document.querySelectorAll('.chip,.bud,.civ-btn,.mode-card,.date-chip,.heure-chip').forEach(c=>c.classList.remove('on'));
   document.getElementById('tel-block').style.display='none';
   window._nouveautesReady=false;
+  selLoginMode('nom');
+  const telInp=document.getElementById('i-tel-login');if(telInp)telInp.value='';
+  const telNew=document.getElementById('i-tel-new');if(telNew)telNew.value='';
   showScr('s-login');
 }
 
@@ -812,9 +867,9 @@ function showScr(id){
   document.querySelectorAll('.scr').forEach(s=>s.classList.remove('on'));
   document.getElementById(id).classList.add('on');
   window.scrollTo(0,0);
-  // Show quit button on all screens except login
-  const qb = document.getElementById('btn-quit');
-  if(qb) qb.classList.toggle('show', id !== 's-login');
+  // Show header with quit button on all screens except login
+  const hd = document.getElementById('app-header');
+  if(hd) hd.style.display = (id !== 's-login') ? 'flex' : 'none';
 }
 
 
@@ -1365,9 +1420,82 @@ window.addEventListener('load', () => {
   }, 100);
 });
 
+
+function emailSuiviLink(){
+  const url = window._suiviUrl;
+  if(!url) return;
+  const email = curUser?.email || '';
+  const civ = curUser?.civilite || '';
+  const nom = curUser?.nom || '';
+  const ref = document.getElementById('conf-sub')?.textContent?.match(/#([A-Z0-9]+)/)?.[1] || '';
+  const subject = encodeURIComponent('Votre commande Le Nombre Vin' + (ref ? ' — Réf. #'+ref : ''));
+  const body = encodeURIComponent(
+    'Bonjour ' + (civ ? civ+' ' : '') + nom + ',\n\n'
+    + 'Votre commande a bien été reçue. Suivez son état en temps réel en cliquant sur le lien ci-dessous :\n\n'
+    + url + '\n\n'
+    + 'Dès que notre équipe aura validé votre commande, vous le verrez instantanément sur cette page.\n\n'
+    + 'À très bientôt,\nL’équipe Le Nombre Vin'
+  );
+  if(email){
+    window.location.href = 'mailto:' + email + '?subject=' + subject + '&body=' + body;
+  } else {
+    // Ask for email
+    const entered = prompt('Votre adresse email pour recevoir le lien :');
+    if(entered && entered.includes('@')){
+      if(curUser) curUser.email = entered;
+      window.location.href = 'mailto:' + entered + '?subject=' + subject + '&body=' + body;
+    }
+  }
+}
+
+
+let loginMode = 'nom';
+
+function selLoginMode(mode){
+  loginMode = mode;
+  document.getElementById('lm-nom').classList.toggle('on', mode==='nom');
+  document.getElementById('lm-tel').classList.toggle('on', mode==='tel');
+  document.getElementById('form-nom').classList.toggle('on', mode==='nom');
+  document.getElementById('form-tel').classList.toggle('on', mode==='tel');
+  document.getElementById('tel-not-found').style.display = 'none';
+}
+
+async function doLoginByTel(){
+  const tel = document.getElementById('i-tel-login').value.trim().replace(/\s/g,'');
+  if(!tel || tel.length < 6){ alert('Merci de saisir votre numéro de téléphone.'); return; }
+  document.getElementById('tel-not-found').style.display = 'none';
+
+  // Search all clients for matching tel
+  try {
+    const snap = await window._get(window._ref(window._db, 'clients'));
+    const clients = snap.val() || {};
+    const match = Object.values(clients).find(c => {
+      const stored = (c.tel||'').replace(/\s/g,'');
+      const input = tel.replace(/^0/, '').replace(/^\+33/, '');
+      const storedNorm = stored.replace(/^0/, '').replace(/^\+33/, '');
+      return stored === tel || storedNorm === input || stored.endsWith(input);
+    });
+    if(match){
+      // Auto-fill civilite
+      const civBtn = match.civilite === 'Mme'
+        ? document.querySelectorAll('.civ-btn')[1]
+        : document.querySelectorAll('.civ-btn')[0];
+      if(civBtn){ civBtn.classList.add('on'); selCivValue = match.civilite||'M.'; }
+      document.getElementById('i-prenom').value = match.prenom||'';
+      document.getElementById('i-nom').value = match.nom||'';
+      await loginUser(match.civilite||'M.', match.prenom, match.nom);
+    } else {
+      document.getElementById('tel-not-found').style.display = 'block';
+    }
+  } catch(e){
+    console.error(e);
+    alert('Erreur de connexion. Identifiez-vous par nom.');
+  }
+}
+
 window.doLogin=doLogin;window.demoLogin=demoLogin;window.doReset=doReset;window.doSubmit=doSubmit;
 window.sel=sel;window.selBud=selBud;window.selCiv=selCiv;window.selMode=selMode;window.doMode=doMode;
-window.afterQuestions=afterQuestions;window.setScore=setScore;window.submitScore=submitScore;window.openScoring=openScoring;window.showMesAvis=showMesAvis;window.loadEvents=loadEvents;window.filterEvts=filterEvts;window.inscrireEvent=inscrireEvent;window.showMaCave=showMaCave;window.doQuit=doQuit;window.confirmQuit=confirmQuit;window.cancelQuit=cancelQuit;window.searchCaveWine=searchCaveWine;window.selectCaveWine=selectCaveWine;window.setAddScore=setAddScore;window.cancelCaveAdd=cancelCaveAdd;window.addToCavePerso=addToCavePerso;window.filterCave=filterCave;window.openPersonalScoring=openPersonalScoring;window.doWineChoice=doWineChoice;window.selectWineChoice=selectWineChoice;window.buildWineChoices=buildWineChoices;window.selHeure=selHeure;window.showScr=showScr;window.copyLink=copyLink;
+window.afterQuestions=afterQuestions;window.setScore=setScore;window.submitScore=submitScore;window.openScoring=openScoring;window.showMesAvis=showMesAvis;window.loadEvents=loadEvents;window.filterEvts=filterEvts;window.inscrireEvent=inscrireEvent;window.showMaCave=showMaCave;window.doQuit=doQuit;window.confirmQuit=confirmQuit;window.cancelQuit=cancelQuit;window.emailSuiviLink=emailSuiviLink;window.selLoginMode=selLoginMode;window.doLoginByTel=doLoginByTel;window.searchCaveWine=searchCaveWine;window.selectCaveWine=selectCaveWine;window.setAddScore=setAddScore;window.cancelCaveAdd=cancelCaveAdd;window.addToCavePerso=addToCavePerso;window.filterCave=filterCave;window.openPersonalScoring=openPersonalScoring;window.doWineChoice=doWineChoice;window.selectWineChoice=selectWineChoice;window.buildWineChoices=buildWineChoices;window.selHeure=selHeure;window.showScr=showScr;window.copyLink=copyLink;
 </script>
 </body>
 </html>
