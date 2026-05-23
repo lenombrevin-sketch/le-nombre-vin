@@ -860,7 +860,7 @@ function searchW(){
     if(q.length<2){sugg.classList.remove('show');return;}
     const matches=activeWines().filter(w=>w.nom.toLowerCase().includes(q)).slice(0,8);
     if(!matches.length){sugg.classList.remove('show');return;}
-    sugg.innerHTML=matches.map(w=>`<div class="ap-sugg-item" onclick="selW('${w.nom.replace(/'/g,"\'")}',${w.prix})"><strong>${w.nom}</strong>${w.stars?'<span style="color:#c9922a;margin-left:4px">${'★'.repeat(w.stars)}</span>':''} <span style="color:#8B4513;float:right">${w.prix}€</span><br><span style="font-size:10px;color:#a07040">${w.type} · ${w.region}</span></div>`).join('');
+    sugg.innerHTML=matches.map(w=>{const st=w.stars?'<span style="color:#c9922a;margin-left:4px">'+'★'.repeat(w.stars)+'</span>':'';return`<div class="ap-sugg-item" onclick="selW('${w.nom.replace(/'/g,"\'")}',${w.prix})"><strong>${w.nom}</strong>${st} <span style="color:#8B4513;float:right">${w.prix}€</span><br><span style="font-size:10px;color:#a07040">${w.type} · ${w.region}</span></div>`;}).join('');
     sugg.classList.add('show');
   },200);
 }
@@ -1042,7 +1042,7 @@ function showRefuse(id){document.getElementById('refuse-block-'+id).style.displa
 function hideRefuse(id){document.getElementById('refuse-block-'+id).style.display='none';}
 
 async function refuseOrder(id){
-  const msg=document.getElementById('refuse-msg-'+id)?.value.trim()||'Nous sommes désolés, nous ne pouvons pas honorer cette commande en l'état.';
+  const msg=document.getElementById('refuse-msg-'+id)?.value.trim()||"Nous sommes désolés, cette commande ne peut pas être honorée.";
   try{
     await window._set(window._ref(window._db,'orders/'+id+'/status'),'refused');
     await window._set(window._ref(window._db,'orders/'+id+'/vendeurMessage'),msg);
