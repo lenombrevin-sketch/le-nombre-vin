@@ -263,6 +263,21 @@ textarea{resize:none;height:72px;margin-bottom:16px;}
 .login-form-block{display:none;}
 .login-form-block.on{display:block;}
 .tel-not-found{background:rgba(180,60,60,.15);border:1px solid rgba(200,80,80,.3);border-radius:10px;padding:10px 14px;font-size:12px;color:rgba(255,150,150,.8);margin-top:10px;display:none;}
+
+/* CONNEXION PERSISTÉE */
+.remember-row{display:flex;align-items:center;gap:10px;margin:12px 0 4px;cursor:pointer;}
+.remember-checkbox{width:20px;height:20px;border-radius:5px;border:1px solid rgba(201,146,42,.3);background:rgba(255,255,255,.04);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s;}
+.remember-checkbox.on{background:rgba(139,69,19,.5);border-color:#c9922a;}
+.remember-checkbox.on::after{content:'✓';color:#f0e6d0;font-size:13px;font-weight:700;}
+.remember-label{font-size:12px;color:rgba(201,146,42,.65);line-height:1.4;}
+
+/* NOTIFICATION PUSH */
+.notif-banner{background:rgba(42,80,139,.15);border:1px solid rgba(100,140,220,.25);border-radius:12px;padding:13px 16px;margin-bottom:14px;display:flex;gap:12px;align-items:flex-start;}
+.notif-banner-icon{font-size:22px;flex-shrink:0;}
+.notif-banner-title{font-size:13px;font-weight:700;color:rgba(140,180,240,.9);margin-bottom:4px;}
+.notif-banner-sub{font-size:11px;color:rgba(140,180,240,.6);}
+.btn-allow-notif{background:rgba(42,80,139,.3);border:1px solid rgba(100,140,220,.35);border-radius:9px;padding:9px 16px;font-size:12px;font-weight:700;color:rgba(140,180,240,.9);cursor:pointer;font-family:'Lato',sans-serif;margin-top:8px;width:100%;}
+.notif-granted{font-size:11px;color:rgba(100,200,100,.7);margin-top:6px;text-align:center;}
 </style>
 </head>
 <body>
@@ -314,6 +329,10 @@ textarea{resize:none;height:72px;margin-bottom:16px;}
           </div>
           <span class="lbl" style="margin-top:4px;">Téléphone <span style="color:rgba(201,146,42,.35);font-size:10px;">(optionnel — pour une connexion rapide lors de vos prochaines visites)</span></span>
           <input type="tel" id="i-tel-new" placeholder="06 12 34 56 78" style="margin-bottom:14px;">
+          <div class="remember-row" onclick="toggleRemember()">
+            <div class="remember-checkbox" id="remember-cb"></div>
+            <div class="remember-label">Me souvenir sur cet appareil<br><span style="font-size:10px;color:rgba(201,146,42,.4);">Ne pas cocher sur la tablette du magasin</span></div>
+          </div>
           <button class="btn-main" onclick="doLogin()">Entrer →</button>
         </div>
 
@@ -345,6 +364,17 @@ textarea{resize:none;height:72px;margin-bottom:16px;}
       <div id="last-purchase-section" style="display:none;margin-bottom:20px;">
         <div class="sec-lbl">Vos derniers achats</div>
         <div class="last-purchase" id="last-purchase-list"></div>
+      </div>
+      <div id="notif-request-block" style="display:none;margin-bottom:12px;">
+        <div class="notif-banner">
+          <div class="notif-banner-icon">🔔</div>
+          <div style="flex:1;">
+            <div class="notif-banner-title">Restez informé de vos commandes</div>
+            <div class="notif-banner-sub">Recevez une notification dès que votre commande est acceptée ou prête</div>
+            <button class="btn-allow-notif" onclick="requestPushPermission()">Activer les notifications</button>
+            <div id="notif-status" class="notif-granted" style="display:none;">✓ Notifications activées</div>
+          </div>
+        </div>
       </div>
       <button class="btn-main" onclick="showScr('s-mode')" style="margin-top:auto;">Passer ma commande →</button>
       <button class="btn-mes-avis" onclick="showMaCave()" style="margin-top:6px;background:rgba(42,110,42,.1);border-color:rgba(100,180,100,.2);color:rgba(120,200,120,.8);">🍾 &nbsp;Ma cave personnelle <span id="cave-perso-badge" style="display:none;background:#2a6e2a;color:#fff;border-radius:100px;padding:1px 7px;font-size:10px;font-weight:700;"></span></button>
@@ -573,28 +603,15 @@ textarea{resize:none;height:72px;margin-bottom:16px;}
         <div style="font-size:12px;color:rgba(201,146,42,.5);">Retrait en magasin — 12 rue de la Cave, Paris</div>
       </div>
       <div class="creneau-info">
-        <div class="creneau-title">📅 Retrait en magasin</div>
-        <div class="creneau-sub">Horaires : Lun-Sam 10h-19h30 · Dimanche 10h-13h</div>
+        <div class="creneau-title">&#128197; Retrait en magasin</div>
+        <div class="creneau-sub">Mar&#8211;Sam : 10h00&#8211;19h30 &nbsp;|&nbsp; Dim : 10h00&#8211;12h30 &nbsp;|&nbsp; Ferm&#233; le lundi</div>
       </div>
       <div class="slbl">Date souhaitée</div>
       <div class="date-grid" id="date-grid"></div>
       <div class="slbl">Créneau horaire</div>
+      <div style="font-size:11px;color:rgba(201,146,42,.45);margin-bottom:10px;" id="heure-note">Sélectionnez d'abord une date</div>
       <div class="heure-grid" id="heure-grid">
-        <div class="heure-chip" onclick="selHeure(this,'10h00')">10h00</div>
-        <div class="heure-chip" onclick="selHeure(this,'10h30')">10h30</div>
-        <div class="heure-chip" onclick="selHeure(this,'11h00')">11h00</div>
-        <div class="heure-chip" onclick="selHeure(this,'11h30')">11h30</div>
-        <div class="heure-chip" onclick="selHeure(this,'14h00')">14h00</div>
-        <div class="heure-chip" onclick="selHeure(this,'14h30')">14h30</div>
-        <div class="heure-chip" onclick="selHeure(this,'15h00')">15h00</div>
-        <div class="heure-chip" onclick="selHeure(this,'15h30')">15h30</div>
-        <div class="heure-chip" onclick="selHeure(this,'16h00')">16h00</div>
-        <div class="heure-chip" onclick="selHeure(this,'16h30')">16h30</div>
-        <div class="heure-chip" onclick="selHeure(this,'17h00')">17h00</div>
-        <div class="heure-chip" onclick="selHeure(this,'17h30')">17h30</div>
-        <div class="heure-chip" onclick="selHeure(this,'18h00')">18h00</div>
-        <div class="heure-chip" onclick="selHeure(this,'18h30')">18h30</div>
-        <div class="heure-chip" onclick="selHeure(this,'19h00')">19h00</div>
+        <div style="font-size:12px;color:rgba(201,146,42,.35);padding:8px;">Choisissez d'abord une date ci-dessus</div>
       </div>
       <button class="btn-main" onclick="doSubmit()">Confirmer ma demande →</button>
     </div>
@@ -639,6 +656,8 @@ onValue(ref(db,'events'),(snap)=>{
   updateEventsBadge();
 });
 window._fbReady=true;
+// Check saved session after short delay
+setTimeout(()=>{ checkSavedSession().then(found=>{ if(!found) checkUrlParam(); }); }, 300);
 </script>
 
 <script>
@@ -693,7 +712,10 @@ async function loginUser(civ,p,n,tel){
     lpSec.style.display='block';
     document.getElementById('last-purchase-list').innerHTML=[...achats].reverse().slice(0,3).map(a=>`<div class="lp-row">🍷 ${fd(a.date)} · ${a.vin}${a.prix?' · '+a.prix+'€':''}</div>`).join('');
   } else lpSec.style.display='none';
+  // Sauvegarder session si "se souvenir"
+  saveSession(client);
   window._nouveautesReady=true;loadNouveautes();
+  checkNotifBlock();
   // Update "noter" badge
   const unscoredCount = (client.achats||[]).filter(a=>!a.clientScore).length;
   // Cave badge
@@ -748,15 +770,50 @@ function buildDatePicker(){
   const days=['Dim','Lun','Mar','Mer','Jeu','Ven','Sam'];
   const months=['jan','fév','mar','avr','mai','jun','jul','aoû','sep','oct','nov','déc'];
   grid.innerHTML='';
-  for(let i=1;i<=10;i++){
+  let added=0, i=1;
+  while(added<14 && i<=30){
     const d=new Date();d.setDate(d.getDate()+i);
-    const iso=d.toISOString().slice(0,10);
-    const chip=document.createElement('div');
-    chip.className='date-chip';
-    chip.innerHTML=`<div class="date-chip-day">${days[d.getDay()]}</div><div class="date-chip-num">${d.getDate()}</div><div class="date-chip-month">${months[d.getMonth()]}</div>`;
-    chip.onclick=()=>{document.querySelectorAll('.date-chip').forEach(c=>c.classList.remove('on'));chip.classList.add('on');selDate=iso;};
-    grid.appendChild(chip);
+    const dow=d.getDay(); // 0=dim,1=lun,...,6=sam
+    // Ouvert : mar(2) mer(3) jeu(4) ven(5) sam(6) dim(0) — fermé lun(1)
+    if(dow !== 1){
+      const iso=d.toISOString().slice(0,10);
+      const chip=document.createElement('div');
+      chip.className='date-chip';
+      chip.innerHTML=`<div class="date-chip-day">${days[dow]}</div><div class="date-chip-num">${d.getDate()}</div><div class="date-chip-month">${months[d.getMonth()]}</div>`;
+      chip.onclick=()=>{
+        document.querySelectorAll('.date-chip').forEach(c=>c.classList.remove('on'));
+        chip.classList.add('on');
+        selDate=iso;
+        // Mettre à jour les créneaux selon le jour
+        buildHeureGrid(dow);
+      };
+      grid.appendChild(chip);
+      added++;
+    }
+    i++;
   }
+}
+
+function buildHeureGrid(dow){
+  // dow: 0=dim, 2-6=mar-sam
+  // Dim: 10h00-12h30 | Mar-Sam: 10h00-19h30
+  const isDim = (dow === 0);
+  const slots = isDim
+    ? ['10h00','10h30','11h00','11h30','12h00','12h30']
+    : ['10h00','10h30','11h00','11h30','12h00','12h30',
+       '14h00','14h30','15h00','15h30','16h00','16h30',
+       '17h00','17h30','18h00','18h30','19h00','19h30'];
+  const grid = document.getElementById('heure-grid');
+  if(!grid) return;
+  selHeure_val = null;
+  grid.innerHTML = slots.map(h=>
+    `<div class="heure-chip" onclick="selHeure(this,'${h}')">${h}</div>`
+  ).join('');
+  // Note horaires
+  const note = document.getElementById('heure-note');
+  if(note) note.textContent = isDim
+    ? 'Dimanche : 10h00 – 12h30'
+    : 'Mardi au samedi : 10h00 – 19h30';
 }
 
 function selHeure(el,h){document.querySelectorAll('.heure-chip').forEach(c=>c.classList.remove('on'));el.classList.add('on');selHeure_val=h;}
@@ -844,6 +901,9 @@ function doReset(){
   document.querySelectorAll('.chip,.bud,.civ-btn,.mode-card,.date-chip,.heure-chip').forEach(c=>c.classList.remove('on'));
   document.getElementById('tel-block').style.display='none';
   window._nouveautesReady=false;
+  clearSession();
+  rememberMe=false;
+  document.getElementById('remember-cb')?.classList.remove('on');
   selLoginMode('nom');
   const telInp=document.getElementById('i-tel-login');if(telInp)telInp.value='';
   const telNew=document.getElementById('i-tel-new');if(telNew)telNew.value='';
@@ -1410,15 +1470,7 @@ async function checkUrlParam() {
 }
 
 // Run on load
-window.addEventListener('load', () => {
-  // Wait for Firebase to be ready
-  const wait = setInterval(() => {
-    if(window._fbReady) {
-      clearInterval(wait);
-      checkUrlParam();
-    }
-  }, 100);
-});
+// Session + URL param handled via firebase ready callback above
 
 
 function emailSuiviLink(){
@@ -1493,9 +1545,117 @@ async function doLoginByTel(){
   }
 }
 
+
+/* ── CONNEXION PERSISTÉE ── */
+let rememberMe = false;
+const STORAGE_KEY = 'lnv_client_session';
+const SESSION_DAYS = 30;
+
+function toggleRemember(){
+  rememberMe = !rememberMe;
+  document.getElementById('remember-cb').classList.toggle('on', rememberMe);
+}
+
+function saveSession(client){
+  if(!rememberMe) return;
+  const session = {
+    key: client.key,
+    prenom: client.prenom,
+    nom: client.nom,
+    civilite: client.civilite||'M.',
+    savedAt: Date.now()
+  };
+  try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(session)); }catch(e){}
+}
+
+function clearSession(){
+  try{ localStorage.removeItem(STORAGE_KEY); }catch(e){}
+}
+
+function loadSession(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(!raw) return null;
+    const s = JSON.parse(raw);
+    // Expire after SESSION_DAYS
+    if(Date.now() - s.savedAt > SESSION_DAYS * 86400000){
+      clearSession(); return null;
+    }
+    return s;
+  }catch(e){ return null; }
+}
+
+// Auto-login from saved session on page load
+async function checkSavedSession(){
+  const s = loadSession();
+  if(!s) return false;
+  try{
+    const snap = await window._get(window._ref(window._db,'clients/'+s.key));
+    if(snap.exists()){
+      // Pre-fill civility
+      const civBtns = document.querySelectorAll('.civ-btn');
+      civBtns.forEach(b=>b.classList.remove('on'));
+      const idx = s.civilite==='Mme'?1:0;
+      if(civBtns[idx]){ civBtns[idx].classList.add('on'); selCivValue=s.civilite; }
+      rememberMe = true;
+      document.getElementById('remember-cb')?.classList.add('on');
+      await loginUser(s.civilite, s.prenom, s.nom, '');
+      return true;
+    }
+  }catch(e){ console.error(e); }
+  return false;
+}
+
+/* ── NOTIFICATIONS PUSH ── */
+async function requestPushPermission(){
+  if(!('Notification' in window)){
+    alert('Les notifications ne sont pas supportées sur cet appareil.');
+    return;
+  }
+  const perm = await Notification.requestPermission();
+  if(perm === 'granted'){
+    document.getElementById('notif-request-block').style.display='none';
+    // Save push token placeholder in client profile
+    if(curUser){
+      curUser.pushEnabled = true;
+      try{ await window._set(window._ref(window._db,'clients/'+curUser.key+'/pushEnabled'), true); }catch(e){}
+    }
+    showNotifStatus();
+  }
+}
+
+function showNotifStatus(){
+  const el = document.getElementById('notif-status');
+  if(el){ el.style.display='block'; }
+}
+
+function checkNotifBlock(){
+  const block = document.getElementById('notif-request-block');
+  if(!block) return;
+  // Show only if: saved session (personal device) + notifications not yet granted
+  const hasSession = !!loadSession();
+  const notGranted = !('Notification' in window) || Notification.permission !== 'granted';
+  block.style.display = (hasSession && notGranted) ? 'block' : 'none';
+  if(Notification.permission === 'granted'){
+    const st = document.getElementById('notif-status');
+    if(st) st.style.display='block';
+  }
+}
+
+// Send local notification (when app is open)
+function sendLocalNotif(title, body){
+  if('Notification' in window && Notification.permission==='granted'){
+    new Notification(title, {
+      body,
+      icon: 'logo-lnv-opt.png',
+      badge: 'logo-lnv-opt.png',
+    });
+  }
+}
+
 window.doLogin=doLogin;window.demoLogin=demoLogin;window.doReset=doReset;window.doSubmit=doSubmit;
 window.sel=sel;window.selBud=selBud;window.selCiv=selCiv;window.selMode=selMode;window.doMode=doMode;
-window.afterQuestions=afterQuestions;window.setScore=setScore;window.submitScore=submitScore;window.openScoring=openScoring;window.showMesAvis=showMesAvis;window.loadEvents=loadEvents;window.filterEvts=filterEvts;window.inscrireEvent=inscrireEvent;window.showMaCave=showMaCave;window.doQuit=doQuit;window.confirmQuit=confirmQuit;window.cancelQuit=cancelQuit;window.emailSuiviLink=emailSuiviLink;window.selLoginMode=selLoginMode;window.doLoginByTel=doLoginByTel;window.searchCaveWine=searchCaveWine;window.selectCaveWine=selectCaveWine;window.setAddScore=setAddScore;window.cancelCaveAdd=cancelCaveAdd;window.addToCavePerso=addToCavePerso;window.filterCave=filterCave;window.openPersonalScoring=openPersonalScoring;window.doWineChoice=doWineChoice;window.selectWineChoice=selectWineChoice;window.buildWineChoices=buildWineChoices;window.selHeure=selHeure;window.showScr=showScr;window.copyLink=copyLink;
+window.afterQuestions=afterQuestions;window.setScore=setScore;window.submitScore=submitScore;window.openScoring=openScoring;window.showMesAvis=showMesAvis;window.loadEvents=loadEvents;window.filterEvts=filterEvts;window.inscrireEvent=inscrireEvent;window.showMaCave=showMaCave;window.doQuit=doQuit;window.confirmQuit=confirmQuit;window.cancelQuit=cancelQuit;window.emailSuiviLink=emailSuiviLink;window.selLoginMode=selLoginMode;window.toggleRemember=toggleRemember;window.buildHeureGrid=buildHeureGrid;window.requestPushPermission=requestPushPermission;window.doLoginByTel=doLoginByTel;window.searchCaveWine=searchCaveWine;window.selectCaveWine=selectCaveWine;window.setAddScore=setAddScore;window.cancelCaveAdd=cancelCaveAdd;window.addToCavePerso=addToCavePerso;window.filterCave=filterCave;window.openPersonalScoring=openPersonalScoring;window.doWineChoice=doWineChoice;window.selectWineChoice=selectWineChoice;window.buildWineChoices=buildWineChoices;window.selHeure=selHeure;window.showScr=showScr;window.copyLink=copyLink;
 </script>
 </body>
 </html>
