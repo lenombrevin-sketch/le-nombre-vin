@@ -278,6 +278,55 @@ textarea{resize:none;height:72px;margin-bottom:16px;}
 .notif-banner-sub{font-size:11px;color:rgba(140,180,240,.6);}
 .btn-allow-notif{background:rgba(42,80,139,.3);border:1px solid rgba(100,140,220,.35);border-radius:9px;padding:9px 16px;font-size:12px;font-weight:700;color:rgba(140,180,240,.9);cursor:pointer;font-family:'Lato',sans-serif;margin-top:8px;width:100%;}
 .notif-granted{font-size:11px;color:rgba(100,200,100,.7);margin-top:6px;text-align:center;}
+
+/* MES COMMANDES */
+.order-status-card{background:rgba(255,255,255,.03);border:1px solid rgba(201,146,42,.15);border-radius:14px;padding:14px 16px;margin-bottom:10px;}
+.osc-header{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:8px;}
+.osc-ref{font-family:'Playfair Display',serif;font-size:14px;color:#f0e6d0;}
+.osc-badge{border-radius:100px;padding:3px 10px;font-size:10px;font-weight:700;white-space:nowrap;flex-shrink:0;}
+.osb-pending{background:rgba(201,146,42,.15);border:1px solid rgba(201,146,42,.25);color:#c9922a;}
+.osb-accepted{background:rgba(42,110,42,.2);border:1px solid rgba(100,180,100,.3);color:rgba(100,200,100,.9);}
+.osb-ready{background:rgba(42,80,139,.2);border:1px solid rgba(100,140,220,.3);color:rgba(140,180,240,.9);}
+.osb-refused{background:rgba(180,40,40,.2);border:1px solid rgba(220,100,100,.3);color:rgba(255,140,140,.9);}
+.osc-meta{font-size:11px;color:rgba(201,146,42,.5);margin-bottom:6px;}
+.osc-msg{background:rgba(42,110,42,.1);border-left:2px solid rgba(100,180,100,.4);border-radius:0 8px 8px 0;padding:7px 11px;font-size:12px;color:rgba(200,230,200,.8);font-style:italic;margin-top:6px;}
+.osc-msg.refused{background:rgba(180,40,40,.1);border-left-color:rgba(220,100,100,.4);color:rgba(255,180,180,.8);}
+.osc-timeline{display:flex;align-items:center;gap:0;margin-top:10px;}
+.osc-step{display:flex;flex-direction:column;align-items:center;flex:1;}
+.osc-dot{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;border:1.5px solid;margin-bottom:4px;}
+.osc-dot.done{background:rgba(42,110,42,.3);border-color:rgba(100,180,100,.5);color:rgba(100,200,100,.9);}
+.osc-dot.active{background:rgba(201,146,42,.25);border-color:#c9922a;color:#c9922a;}
+.osc-dot.wait{background:rgba(255,255,255,.03);border-color:rgba(201,146,42,.15);color:rgba(201,146,42,.25);}
+.osc-step-lbl{font-size:9px;color:rgba(201,146,42,.45);text-align:center;line-height:1.3;}
+.osc-step-lbl.active{color:#c9922a;font-weight:700;}
+.osc-line{flex:1;height:1.5px;background:rgba(201,146,42,.15);margin-bottom:14px;}
+.osc-line.done{background:rgba(100,180,100,.4);}
+
+/* MESSAGERIE CLIENT */
+.chat-wrap{display:flex;flex-direction:column;height:calc(100vh - 180px);min-height:300px;}
+.chat-messages{flex:1;overflow-y:auto;padding:8px 0 12px;display:flex;flex-direction:column;gap:10px;-webkit-overflow-scrolling:touch;}
+.msg-bubble{max-width:82%;padding:10px 14px;border-radius:16px;font-size:13px;line-height:1.5;}
+.msg-bubble.from-cave{background:rgba(139,69,19,.25);border:1px solid rgba(201,146,42,.2);border-bottom-left-radius:4px;align-self:flex-start;color:#f0e6d0;}
+.msg-bubble.from-client{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-bottom-right-radius:4px;align-self:flex-end;color:#f0e6d0;}
+.msg-sender{font-size:10px;font-weight:700;margin-bottom:3px;}
+.msg-sender.cave{color:#c9922a;}
+.msg-sender.client{color:rgba(200,180,140,.6);text-align:right;}
+.msg-time{font-size:10px;color:rgba(201,146,42,.35);margin-top:3px;}
+.msg-time.right{text-align:right;}
+.msg-photo{max-width:100%;border-radius:10px;margin-top:6px;display:block;cursor:pointer;}
+.chat-input-wrap{border-top:1px solid rgba(201,146,42,.15);padding-top:12px;display:flex;flex-direction:column;gap:8px;}
+.chat-photo-preview{display:none;position:relative;width:64px;height:64px;}
+.chat-photo-preview img{width:64px;height:64px;object-fit:cover;border-radius:8px;border:1px solid rgba(201,146,42,.3);}
+.chat-photo-preview .del-photo{position:absolute;top:-6px;right:-6px;background:#c0392b;color:#fff;border-radius:50%;width:18px;height:18px;display:flex;align-items:center;justify-content:center;font-size:10px;cursor:pointer;border:none;}
+.chat-row{display:flex;gap:8px;align-items:flex-end;}
+.chat-inp{flex:1;background:rgba(255,255,255,.04);border:1px solid rgba(201,146,42,.2);border-radius:12px;padding:11px 14px;font-size:14px;color:#f0e6d0;font-family:'Lato',sans-serif;outline:none;resize:none;min-height:44px;max-height:100px;-webkit-appearance:none;}
+.chat-inp:focus{border-color:rgba(201,146,42,.5);}
+.chat-inp::placeholder{color:rgba(201,146,42,.2);}
+.btn-send{background:#8B4513;border:none;border-radius:10px;padding:11px 16px;font-size:18px;cursor:pointer;flex-shrink:0;transition:opacity .2s;}
+.btn-send:active{opacity:.8;}
+.btn-photo-attach{background:transparent;border:1px solid rgba(201,146,42,.2);border-radius:10px;padding:10px 12px;font-size:16px;cursor:pointer;flex-shrink:0;}
+.msg-empty{text-align:center;padding:32px 16px;color:rgba(201,146,42,.35);font-size:13px;}
+.msg-empty-icon{font-size:36px;margin-bottom:10px;}
 </style>
 </head>
 <body>
@@ -503,6 +552,50 @@ textarea{resize:none;height:72px;margin-bottom:16px;}
       </div>
     </div>
 
+
+    <!-- MES COMMANDES -->
+    <div id="s-mes-commandes" class="scr">
+      <div style="padding:16px 0 12px;display:flex;align-items:center;gap:12px;">
+        <button onclick="showScr('s-welcome')" style="background:transparent;border:1px solid rgba(201,146,42,.2);border-radius:8px;padding:6px 12px;font-size:12px;color:rgba(201,146,42,.6);cursor:pointer;font-family:'Lato',sans-serif;flex-shrink:0;">&larr; Retour</button>
+        <div>
+          <div style="font-family:'Playfair Display',serif;font-size:20px;color:#f0e6d0;">Mes commandes</div>
+          <div style="font-size:11px;color:rgba(201,146,42,.45);">Suivi en temps r&eacute;el</div>
+        </div>
+      </div>
+      <div id="mes-commandes-list">
+        <div style="text-align:center;padding:32px;color:rgba(201,146,42,.35);font-size:13px;">Chargement&hellip;</div>
+      </div>
+    </div>
+
+
+    <!-- MESSAGERIE -->
+    <div id="s-messages" class="scr">
+      <div style="padding:14px 0 10px;display:flex;align-items:center;gap:12px;">
+        <button onclick="showScr('s-welcome')" style="background:transparent;border:1px solid rgba(201,146,42,.2);border-radius:8px;padding:6px 12px;font-size:12px;color:rgba(201,146,42,.6);cursor:pointer;font-family:'Lato',sans-serif;flex-shrink:0;">&larr; Retour</button>
+        <div>
+          <div style="font-family:'Playfair Display',serif;font-size:18px;color:#f0e6d0;">Le Nombre Vin</div>
+          <div id="chat-status" style="font-size:11px;color:rgba(100,200,100,.6);">&#9679; En ligne</div>
+        </div>
+      </div>
+      <div class="chat-wrap">
+        <div class="chat-messages" id="chat-messages">
+          <div class="msg-empty"><div class="msg-empty-icon">&#128172;</div>Aucun message pour le moment.<br>Envoyez un message &agrave; votre caviste !</div>
+        </div>
+        <div class="chat-input-wrap">
+          <div class="chat-photo-preview" id="chat-photo-preview">
+            <img id="chat-photo-img" src="" alt="">
+            <button class="del-photo" onclick="removeChatPhoto()">&#10005;</button>
+          </div>
+          <div class="chat-row">
+            <label for="chat-file-inp" class="btn-photo-attach" title="Envoyer une photo">&#128247;</label>
+            <input type="file" id="chat-file-inp" accept="image/*" style="display:none;" onchange="attachChatPhoto(this)">
+            <textarea class="chat-inp" id="chat-inp" placeholder="Votre message..." rows="1" oninput="autoResizeChat(this)"></textarea>
+            <button class="btn-send" onclick="sendClientMessage()">&#10148;</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- MODE : EN MAGASIN ou À DISTANCE -->
     <div id="s-mode" class="scr">
       <div style="text-align:center;padding:20px 0 24px;">
@@ -655,6 +748,7 @@ onValue(ref(db,'events'),(snap)=>{
   window._events=snap.val()||{};
   updateEventsBadge();
 });
+window._onValue = onValue;
 window._fbReady=true;
 // Check saved session after short delay
 setTimeout(()=>{ checkSavedSession().then(found=>{ if(!found) checkUrlParam(); }); }, 300);
@@ -713,9 +807,11 @@ async function loginUser(civ,p,n,tel){
     document.getElementById('last-purchase-list').innerHTML=[...achats].reverse().slice(0,3).map(a=>`<div class="lp-row">🍷 ${fd(a.date)} · ${a.vin}${a.prix?' · '+a.prix+'€':''}</div>`).join('');
   } else lpSec.style.display='none';
   // Sauvegarder session si "se souvenir"
-  saveSession(client);
+  await saveSession(client);
   window._nouveautesReady=true;loadNouveautes();
   checkNotifBlock();
+  listenClientOrders();
+  initChatListener();
   // Update "noter" badge
   const unscoredCount = (client.achats||[]).filter(a=>!a.clientScore).length;
   // Cave badge
@@ -901,7 +997,8 @@ function doReset(){
   document.querySelectorAll('.chip,.bud,.civ-btn,.mode-card,.date-chip,.heure-chip').forEach(c=>c.classList.remove('on'));
   document.getElementById('tel-block').style.display='none';
   window._nouveautesReady=false;
-  clearSession();
+  chatListener=null;
+  clearSession(); // async, fire and forget
   rememberMe=false;
   document.getElementById('remember-cb')?.classList.remove('on');
   selLoginMode('nom');
@@ -1546,53 +1643,66 @@ async function doLoginByTel(){
 }
 
 
-/* ── CONNEXION PERSISTÉE ── */
+/* ── CONNEXION PERSISTÉE VIA FIREBASE ── */
 let rememberMe = false;
-const STORAGE_KEY = 'lnv_client_session';
-const SESSION_DAYS = 30;
+
+// Identifiant unique de cet appareil (stable dans localStorage comme fallback)
+function getDeviceId(){
+  let id = '';
+  try{ id = localStorage.getItem('lnv_device_id')||''; }catch(e){}
+  if(!id){
+    id = 'dev_' + Date.now() + '_' + Math.random().toString(36).slice(2,8);
+    try{ localStorage.setItem('lnv_device_id', id); }catch(e){}
+  }
+  return id;
+}
+
+const DEVICE_ID = getDeviceId();
 
 function toggleRemember(){
   rememberMe = !rememberMe;
   document.getElementById('remember-cb').classList.toggle('on', rememberMe);
 }
 
-function saveSession(client){
+async function saveSession(client){
   if(!rememberMe) return;
-  const session = {
-    key: client.key,
-    prenom: client.prenom,
-    nom: client.nom,
-    civilite: client.civilite||'M.',
-    savedAt: Date.now()
-  };
-  try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(session)); }catch(e){}
-}
-
-function clearSession(){
-  try{ localStorage.removeItem(STORAGE_KEY); }catch(e){}
-}
-
-function loadSession(){
   try{
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if(!raw) return null;
-    const s = JSON.parse(raw);
-    // Expire after SESSION_DAYS
-    if(Date.now() - s.savedAt > SESSION_DAYS * 86400000){
-      clearSession(); return null;
+    await window._set(window._ref(window._db, 'sessions/' + DEVICE_ID), {
+      key: client.key,
+      prenom: client.prenom,
+      nom: client.nom,
+      civilite: client.civilite||'M.',
+      savedAt: Date.now()
+    });
+  }catch(e){ console.error('saveSession:', e); }
+}
+
+async function clearSession(){
+  try{
+    await window._set(window._ref(window._db, 'sessions/' + DEVICE_ID), null);
+  }catch(e){}
+}
+
+async function loadSession(){
+  try{
+    const snap = await window._get(window._ref(window._db, 'sessions/' + DEVICE_ID));
+    if(!snap.exists()) return null;
+    const s = snap.val();
+    // Expire after 30 days
+    if(Date.now() - s.savedAt > 30 * 86400000){
+      await clearSession(); return null;
     }
     return s;
   }catch(e){ return null; }
 }
 
-// Auto-login from saved session on page load
+// Auto-login from Firebase session
 async function checkSavedSession(){
-  const s = loadSession();
+  const s = await loadSession();
   if(!s) return false;
   try{
-    const snap = await window._get(window._ref(window._db,'clients/'+s.key));
+    const snap = await window._get(window._ref(window._db, 'clients/'+s.key));
     if(snap.exists()){
-      // Pre-fill civility
       const civBtns = document.querySelectorAll('.civ-btn');
       civBtns.forEach(b=>b.classList.remove('on'));
       const idx = s.civilite==='Mme'?1:0;
@@ -1602,7 +1712,7 @@ async function checkSavedSession(){
       await loginUser(s.civilite, s.prenom, s.nom, '');
       return true;
     }
-  }catch(e){ console.error(e); }
+  }catch(e){ console.error('checkSavedSession:', e); }
   return false;
 }
 
@@ -1653,9 +1763,249 @@ function sendLocalNotif(title, body){
   }
 }
 
+
+/* MES COMMANDES */
+window._allOrders = {};
+
+function listenClientOrders(){
+  if(!curUser || !window._db || !window._onValue) return;
+  window._onValue(window._ref(window._db, 'orders'), (snap) => {
+    const all = snap.val() || {};
+    window._allOrders = {};
+    Object.values(all).forEach(o => {
+      if(o.clientId === curUser.key) window._allOrders[o.id] = o;
+    });
+    updateCommandesBadge();
+    if(document.getElementById('s-mes-commandes').classList.contains('on')) renderMesCommandes();
+  });
+}
+
+function updateCommandesBadge(){
+  const orders = Object.values(window._allOrders||{});
+  const active = orders.filter(o => o.status === 'pending' || o.status === 'accepted').length;
+  const badge = document.getElementById('commandes-badge');
+  if(badge){ badge.style.display = active ? 'inline' : 'none'; badge.textContent = active; }
+}
+
+function showMesCommandes(){
+  renderMesCommandes();
+  showScr('s-mes-commandes');
+}
+
+function fdOrder(s){
+  if(!s) return '';
+  try{ return new Date(s).toLocaleDateString('fr-FR',{day:'2-digit',month:'short',year:'numeric'}); }catch(e){ return s; }
+}
+function fdCreneau(d,h){
+  if(!d) return '';
+  try{ return new Date(d).toLocaleDateString('fr-FR',{weekday:'short',day:'numeric',month:'short'})+(h?' \u00e0 '+h:''); }catch(e){ return d; }
+}
+
+function renderMesCommandes(){
+  const orders = Object.values(window._allOrders||{}).sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt));
+  const el = document.getElementById('mes-commandes-list');
+  if(!el) return;
+  if(!orders.length){
+    el.innerHTML = '<div style="text-align:center;padding:32px;color:rgba(201,146,42,.35);font-size:13px;">Aucune commande pour le moment</div>';
+    return;
+  }
+  const STATUS_CFG = {
+    pending:  {label:'En attente',    cls:'osb-pending',  icon:'&#9203;'},
+    accepted: {label:'Accept\u00e9e', cls:'osb-accepted', icon:'&#9989;'},
+    ready:    {label:'Pr\u00eate !',  cls:'osb-ready',    icon:'&#127881;'},
+    refused:  {label:'Non disponible',cls:'osb-refused',  icon:'&#10060;'},
+  };
+  const STEP_LABELS = ['Re\u00e7ue','Accept\u00e9e','Pr\u00eate'];
+  const steps = ['pending','accepted','ready'];
+
+  el.innerHTML = orders.map(o => {
+    const st = STATUS_CFG[o.status] || STATUS_CFG.pending;
+    const curIdx = steps.indexOf(o.status);
+
+    let timelineHtml = '';
+    if(o.status !== 'refused'){
+      timelineHtml = '<div class="osc-timeline">';
+      steps.forEach((s,i) => {
+        const isDone = i < curIdx;
+        const isActive = i === curIdx;
+        const cls = isDone ? 'done' : isActive ? 'active' : 'wait';
+        const dotContent = isDone ? '&#10003;' : (i+1);
+        timelineHtml += '<div class="osc-step">';
+        timelineHtml += '<div class="osc-dot '+cls+'">'+dotContent+'</div>';
+        timelineHtml += '<div class="osc-step-lbl'+(isActive?' active':'')+'">'+STEP_LABELS[i]+'</div>';
+        timelineHtml += '</div>';
+        if(i < steps.length-1){
+          timelineHtml += '<div class="osc-line'+(i < curIdx?' done':'')+'"></div>';
+        }
+      });
+      timelineHtml += '</div>';
+    }
+
+    let tagsHtml = '';
+    if(o.occasion) tagsHtml += '<span style="background:rgba(139,69,19,.15);border:1px solid rgba(180,130,60,.2);border-radius:100px;padding:2px 9px;font-size:10px;color:rgba(201,146,42,.7);">'+o.occasion+'</span>';
+    if(o.type)     tagsHtml += '<span style="background:rgba(139,69,19,.15);border:1px solid rgba(180,130,60,.2);border-radius:100px;padding:2px 9px;font-size:10px;color:rgba(201,146,42,.7);">'+o.type+'</span>';
+    if(o.budget)   tagsHtml += '<span style="background:rgba(139,69,19,.15);border:1px solid rgba(180,130,60,.2);border-radius:100px;padding:2px 9px;font-size:10px;color:rgba(201,146,42,.7);">'+o.budget+'</span>';
+    if(o.wineChoice && !o.wineChoice.caviste) tagsHtml += '<span style="background:rgba(139,69,19,.2);border:1px solid rgba(180,130,60,.3);border-radius:100px;padding:2px 9px;font-size:10px;color:#c9922a;font-weight:700;">&#127863; '+o.wineChoice.nom+'</span>';
+    if(o.wineChoice && o.wineChoice.caviste)  tagsHtml += '<span style="background:rgba(201,146,42,.12);border:1px solid rgba(201,146,42,.25);border-radius:100px;padding:2px 9px;font-size:10px;color:#c9922a;font-weight:700;">&#127945; Choix du caviste</span>';
+
+    const msgHtml = o.vendeurMessage ? '<div class="osc-msg'+(o.status==='refused'?' refused':'')+'">&#8220;'+o.vendeurMessage+'&#8221;</div>' : '';
+    const creneauHtml = o.creneauDate ? '<div style="font-size:11px;color:rgba(100,200,100,.7);margin-top:4px;font-weight:700;">&#128197; Retrait : '+fdCreneau(o.creneauDate,o.creneauHeure)+'</div>' : '';
+
+    return '<div class="order-status-card">'
+      +'<div class="osc-header">'
+      +'<div><div class="osc-ref">Commande #'+(o.ref||o.id.slice(-6).toUpperCase())+'</div>'
+      +'<div class="osc-meta">'+fdOrder(o.createdAt)+creneauHtml+'</div></div>'
+      +'<span class="osc-badge '+st.cls+'">'+st.icon+' '+st.label+'</span>'
+      +'</div>'
+      +'<div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:4px;">'+tagsHtml+'</div>'
+      +msgHtml
+      +timelineHtml
+      +'</div>';
+  }).join('');
+}
+
+
+/* MESSAGERIE CLIENT */
+let chatPhotoB64 = null;
+let chatListener = null;
+
+function showMessages(){
+  markMessagesRead();
+  showScr('s-messages');
+  listenMessages();
+}
+
+function listenMessages(){
+  if(!curUser || !window._db || !window._onValue) return;
+  if(chatListener) return; // already listening
+  chatListener = window._onValue(
+    window._ref(window._db, 'messages/' + curUser.key),
+    (snap) => {
+      const msgs = snap.val() || {};
+      renderMessages(msgs);
+      updateMsgBadge(msgs);
+    }
+  );
+}
+
+function updateMsgBadge(msgs){
+  const all = Object.values(msgs||{});
+  const unread = all.filter(m => m.from === 'cave' && !m.readByClient).length;
+  const badge = document.getElementById('msg-badge');
+  if(badge){ badge.style.display = unread ? 'inline' : 'none'; badge.textContent = unread; }
+}
+
+async function markMessagesRead(){
+  if(!curUser || !window._db) return;
+  try{
+    const snap = await window._get(window._ref(window._db, 'messages/' + curUser.key));
+    const msgs = snap.val() || {};
+    const updates = {};
+    Object.entries(msgs).forEach(([k,m]) => {
+      if(m.from === 'cave' && !m.readByClient) updates[k+'/readByClient'] = true;
+    });
+    if(Object.keys(updates).length){
+      const { update } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js');
+      await update(window._ref(window._db, 'messages/' + curUser.key), updates);
+    }
+  }catch(e){ console.error(e); }
+}
+
+function fdMsg(iso){
+  if(!iso) return '';
+  const d = new Date(iso);
+  const now = new Date();
+  const isToday = d.toDateString() === now.toDateString();
+  return isToday
+    ? d.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})
+    : d.toLocaleDateString('fr-FR',{day:'2-digit',month:'short'})+' '+d.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
+}
+
+function renderMessages(msgs){
+  const el = document.getElementById('chat-messages');
+  if(!el) return;
+  const list = Object.values(msgs).sort((a,b)=>new Date(a.ts)-new Date(b.ts));
+  if(!list.length){
+    el.innerHTML = '<div class="msg-empty"><div class="msg-empty-icon">&#128172;</div>Aucun message pour le moment.<br>Envoyez un message &agrave; votre caviste !</div>';
+    return;
+  }
+  el.innerHTML = list.map(m => {
+    const fromCave = m.from === 'cave';
+    const side = fromCave ? 'from-cave' : 'from-client';
+    const senderCls = fromCave ? 'cave' : 'client';
+    const senderName = fromCave ? 'Le Nombre Vin' : (curUser?.prenom||'Vous');
+    const photoHtml = m.photo ? `<img class="msg-photo" src="${m.photo}" onclick="window.open('${m.photo}','_blank')">` : '';
+    const textHtml = m.text ? `<div>${m.text}</div>` : '';
+    return `<div style="display:flex;flex-direction:column;align-items:${fromCave?'flex-start':'flex-end'};">
+      <div class="msg-sender ${senderCls}">${senderName}</div>
+      <div class="msg-bubble ${side}">
+        ${textHtml}${photoHtml}
+        <div class="msg-time${fromCave?'':' right'}">${fdMsg(m.ts)}</div>
+      </div>
+    </div>`;
+  }).join('');
+  el.scrollTop = el.scrollHeight;
+}
+
+function autoResizeChat(el){
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 100) + 'px';
+}
+
+function attachChatPhoto(input){
+  const file = input.files[0];
+  if(!file) return;
+  if(file.size > 5*1024*1024){ alert('Image trop lourde (max 5MB)'); return; }
+  const reader = new FileReader();
+  reader.onload = e => {
+    chatPhotoB64 = e.target.result;
+    document.getElementById('chat-photo-img').src = chatPhotoB64;
+    document.getElementById('chat-photo-preview').style.display = 'block';
+  };
+  reader.readAsDataURL(file);
+}
+
+function removeChatPhoto(){
+  chatPhotoB64 = null;
+  document.getElementById('chat-photo-preview').style.display = 'none';
+  document.getElementById('chat-photo-img').src = '';
+  document.getElementById('chat-file-inp').value = '';
+}
+
+async function sendClientMessage(){
+  const inp = document.getElementById('chat-inp');
+  const text = inp?.value.trim() || '';
+  if(!text && !chatPhotoB64){ return; }
+  if(!curUser || !window._db){ alert('Connexion requise.'); return; }
+  const msgId = 'msg_' + Date.now();
+  const msg = {
+    id: msgId,
+    from: 'client',
+    text: text || '',
+    photo: chatPhotoB64 || null,
+    ts: new Date().toISOString(),
+    readByVendeur: false,
+    readByClient: true,
+    clientKey: curUser.key,
+    clientName: (curUser.civilite||'')+' '+curUser.prenom+' '+curUser.nom
+  };
+  try{
+    await window._set(window._ref(window._db, 'messages/'+curUser.key+'/'+msgId), msg);
+    if(inp) inp.value = '';
+    removeChatPhoto();
+    inp.style.height = 'auto';
+  }catch(e){ alert('Erreur envoi : '+e.message); }
+}
+
+// Init listener on login
+function initChatListener(){
+  chatListener = null;
+  if(window._onValue && curUser) listenMessages();
+}
+
 window.doLogin=doLogin;window.demoLogin=demoLogin;window.doReset=doReset;window.doSubmit=doSubmit;
 window.sel=sel;window.selBud=selBud;window.selCiv=selCiv;window.selMode=selMode;window.doMode=doMode;
-window.afterQuestions=afterQuestions;window.setScore=setScore;window.submitScore=submitScore;window.openScoring=openScoring;window.showMesAvis=showMesAvis;window.loadEvents=loadEvents;window.filterEvts=filterEvts;window.inscrireEvent=inscrireEvent;window.showMaCave=showMaCave;window.doQuit=doQuit;window.confirmQuit=confirmQuit;window.cancelQuit=cancelQuit;window.emailSuiviLink=emailSuiviLink;window.selLoginMode=selLoginMode;window.toggleRemember=toggleRemember;window.buildHeureGrid=buildHeureGrid;window.requestPushPermission=requestPushPermission;window.doLoginByTel=doLoginByTel;window.searchCaveWine=searchCaveWine;window.selectCaveWine=selectCaveWine;window.setAddScore=setAddScore;window.cancelCaveAdd=cancelCaveAdd;window.addToCavePerso=addToCavePerso;window.filterCave=filterCave;window.openPersonalScoring=openPersonalScoring;window.doWineChoice=doWineChoice;window.selectWineChoice=selectWineChoice;window.buildWineChoices=buildWineChoices;window.selHeure=selHeure;window.showScr=showScr;window.copyLink=copyLink;
+window.afterQuestions=afterQuestions;window.setScore=setScore;window.submitScore=submitScore;window.openScoring=openScoring;window.showMesAvis=showMesAvis;window.loadEvents=loadEvents;window.filterEvts=filterEvts;window.inscrireEvent=inscrireEvent;window.showMaCave=showMaCave;window.doQuit=doQuit;window.confirmQuit=confirmQuit;window.cancelQuit=cancelQuit;window.emailSuiviLink=emailSuiviLink;window.selLoginMode=selLoginMode;window.toggleRemember=toggleRemember;window.buildHeureGrid=buildHeureGrid;window.showMesCommandes=showMesCommandes;window.showMessages=showMessages;window.sendClientMessage=sendClientMessage;window.attachChatPhoto=attachChatPhoto;window.removeChatPhoto=removeChatPhoto;window.autoResizeChat=autoResizeChat;window.requestPushPermission=requestPushPermission;window.doLoginByTel=doLoginByTel;window.searchCaveWine=searchCaveWine;window.selectCaveWine=selectCaveWine;window.setAddScore=setAddScore;window.cancelCaveAdd=cancelCaveAdd;window.addToCavePerso=addToCavePerso;window.filterCave=filterCave;window.openPersonalScoring=openPersonalScoring;window.doWineChoice=doWineChoice;window.selectWineChoice=selectWineChoice;window.buildWineChoices=buildWineChoices;window.selHeure=selHeure;window.showScr=showScr;window.copyLink=copyLink;
 </script>
 </body>
 </html>
