@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Le Nombre Vin — Suivi">
+<meta name="theme-color" content="#0a0604">
+<title>Le Nombre Vin — Suivi de commande</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{min-height:100%;background:#0a0604;}
+body{font-family:'Lato',sans-serif;color:#f0e6d0;min-height:100vh;}
+.bg{position:fixed;inset:0;z-index:0;background:radial-gradient(ellipse 80% 60% at 50% 0%,rgba(180,120,40,.15) 0%,transparent 70%),#0a0604;}
+.wrap{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:24px 20px 48px;max-width:480px;margin:0 auto;}
+.logo-wrap{margin-bottom:24px;}
+.logo-wrap img{width:160px;filter:drop-shadow(0 4px 16px rgba(180,120,40,.25));}
+.card{background:rgba(255,255,255,.03);border:1px solid rgba(201,146,42,.18);border-radius:18px;padding:24px 22px;width:100%;margin-bottom:16px;backdrop-filter:blur(12px);}
+.ref-lbl{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:rgba(201,146,42,.45);margin-bottom:6px;}
+.ref-val{font-family:'Playfair Display',serif;font-size:22px;color:#e8c87a;letter-spacing:.04em;}
+.status-wrap{margin:20px 0 16px;text-align:center;}
+.status-icon{font-size:48px;margin-bottom:12px;display:block;}
+.status-title{font-family:'Playfair Display',serif;font-size:22px;color:#f0e6d0;margin-bottom:6px;}
+.status-sub{font-size:13px;color:rgba(201,146,42,.55);line-height:1.55;}
+.status-msg{background:rgba(139,69,19,.15);border:1px solid rgba(201,146,42,.2);border-radius:10px;padding:12px 16px;font-size:13px;color:rgba(201,146,42,.8);font-style:italic;margin-top:12px;line-height:1.55;}
+
+/* Timeline */
+.timeline{display:flex;flex-direction:column;gap:0;margin:4px 0;}
+.tl-step{display:flex;gap:12px;padding-bottom:20px;position:relative;}
+.tl-step:last-child{padding-bottom:0;}
+.tl-step:not(:last-child)::before{content:'';position:absolute;left:15px;top:32px;bottom:0;width:1px;background:rgba(201,146,42,.15);}
+.tl-dot{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;border:1px solid;}
+.tl-dot.done{background:rgba(42,110,42,.2);border-color:rgba(100,200,100,.3);color:#5cb85c;}
+.tl-dot.active{background:rgba(201,146,42,.2);border-color:rgba(201,146,42,.4);color:#c9922a;}
+.tl-dot.pending{background:rgba(255,255,255,.03);border-color:rgba(201,146,42,.12);color:rgba(201,146,42,.25);}
+.tl-content{padding-top:4px;flex:1;}
+.tl-title{font-size:13px;font-weight:700;color:#f0e6d0;}
+.tl-title.pending{color:rgba(201,146,42,.35);}
+.tl-date{font-size:11px;color:rgba(201,146,42,.45);margin-top:2px;}
+
+/* Commande détail */
+.detail-row{display:flex;justify-content:space-between;align-items:baseline;padding:8px 0;border-bottom:1px solid rgba(201,146,42,.07);font-size:12px;}
+.detail-row:last-child{border-bottom:none;}
+.dk{color:rgba(201,146,42,.5);}
+.dv{color:#e8c87a;font-weight:700;text-align:right;max-width:60%;}
+
+/* Créneau */
+.creneau-block{background:rgba(42,110,42,.12);border:1px solid rgba(100,200,100,.2);border-radius:10px;padding:12px 16px;margin-top:12px;}
+.creneau-lbl{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:rgba(100,200,100,.6);margin-bottom:5px;}
+.creneau-val{font-size:14px;font-weight:700;color:#a8d8a8;}
+
+/* Loading */
+.loading-state{text-align:center;padding:48px 20px;}
+.loading-state .spin{font-size:32px;display:block;margin-bottom:14px;animation:spin 2s linear infinite;}
+@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+
+.not-found{text-align:center;padding:32px 20px;}
+.btn-back{display:block;background:#8B4513;border-radius:11px;padding:14px;font-size:13px;font-weight:700;color:#fff8ee;text-align:center;letter-spacing:.05em;text-transform:uppercase;margin-top:16px;text-decoration:none;}
+.refresh-btn{background:transparent;border:1px solid rgba(201,146,42,.25);border-radius:9px;padding:10px 20px;font-size:12px;color:rgba(201,146,42,.7);cursor:pointer;font-family:'Lato',sans-serif;margin-top:12px;display:block;width:100%;text-align:center;}
+</style>
+</head>
+<body>
+<div class="bg"></div>
+<div id="notif-banner-suivi" style="display:none;background:rgba(42,80,139,.2);border-bottom:1px solid rgba(100,140,220,.25);padding:12px 20px;align-items:center;gap:12px;max-width:480px;margin:0 auto;border-radius:0 0 12px 12px;">
+  <span style="font-size:18px;">&#128276;</span>
+  <div style="flex:1;">
+    <div style="font-size:13px;font-weight:700;color:rgba(140,180,240,.9);">Activez les notifications</div>
+    <div style="font-size:11px;color:rgba(140,180,240,.6);">Soyez alerte des que votre commande change de statut</div>
+  </div>
+  <button onclick="allowNotifSuivi()" style="background:rgba(42,80,139,.4);border:1px solid rgba(100,140,220,.4);border-radius:8px;padding:7px 14px;font-size:12px;font-weight:700;color:rgba(140,180,240,.9);cursor:pointer;font-family:sans-serif;white-space:nowrap;">Activer</button>
+</div>
+<div id="notif-ok-suivi" style="display:none;text-align:center;padding:8px;font-size:12px;color:rgba(100,200,100,.8);">&#10003; Notifications activees</div>
+<div class="wrap">
+  <div class="logo-wrap">
+    <img src="logo-lnv-opt.png" alt="Le Nombre Vin">
+  </div>
+  <div id="main-content">
+    <div class="loading-state">
+      <span class="spin">⏳</span>
+      <div style="font-size:13px;color:rgba(201,146,42,.5);">Chargement de votre commande…</div>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+const fc={apiKey:"AIzaSyCRc2sDM4TrwjLduJT4baKbErLvdnK-fTU",authDomain:"le-nombre-vin.firebaseapp.com",databaseURL:"https://le-nombre-vin-default-rtdb.europe-west1.firebasedatabase.app",projectId:"le-nombre-vin",storageBucket:"le-nombre-vin.firebasestorage.app",messagingSenderId:"197178474175",appId:"1:197178474175:web:8824331995566c488a100a"};
+const app=initializeApp(fc);const db=getDatabase(app);
+
+const params=new URLSearchParams(window.location.search);
+const orderId=params.get('id');
+
+if(!orderId){
+  document.getElementById('main-content').innerHTML=`
+    <div class="not-found">
+      <div style="font-size:36px;margin-bottom:12px">🔍</div>
+      <div style="font-family:'Playfair Display',serif;font-size:18px;color:#f0e6d0;margin-bottom:8px">Commande introuvable</div>
+      <div style="font-size:13px;color:rgba(201,146,42,.5);">Aucun identifiant de commande fourni.</div>
+      <a href="tablette.html" class="btn-back">Nouvelle commande →</a>
+    </div>`;
+} else {
+  onValue(ref(db,'orders/'+orderId),(snap)=>{
+    const order=snap.val();
+    if(!order){
+      document.getElementById('main-content').innerHTML=`
+        <div class="not-found">
+          <div style="font-size:36px;margin-bottom:12px">❓</div>
+          <div style="font-family:'Playfair Display',serif;font-size:18px;color:#f0e6d0;margin-bottom:8px">Commande introuvable</div>
+          <div style="font-size:13px;color:rgba(201,146,42,.5);">Cette commande n'existe pas ou a été supprimée.</div>
+          <a href="tablette.html" class="btn-back">Retour →</a>
+        </div>`;
+      return;
+    }
+    renderOrder(order);
+  });
+}
+
+function fd(s){if(!s)return'—';try{return new Date(s).toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});}catch(e){return s;}}
+function fdShort(s){if(!s)return'—';try{return new Date(s).toLocaleDateString('fr-FR',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});}catch(e){return s;}}
+
+let _prevStatus = null;
+
+function tryNotify(o){
+  if(!('Notification' in window) || Notification.permission !== 'granted') return;
+  if(_prevStatus === null){ _prevStatus = o.status; return; }
+  if(_prevStatus === o.status) return;
+  _prevStatus = o.status;
+  const msgs = {
+    accepted: { title: 'Commande acceptee !', body: 'Votre commande au Nombre Vin est confirmee.' },
+    ready: { title: 'Prete a retirer !', body: 'Votre commande est prete. Venez la recuperer en magasin.' },
+    refused: { title: 'Commande non disponible', body: 'Votre commande ne peut pas etre honoree. Contactez-nous.' },
+  };
+  const m = msgs[o.status];
+  if(m) new Notification(m.title, { body: m.body, icon: 'logo-lnv-opt.png' });
+}
+
+async function initNotifications(){
+  if(!('Notification' in window)) return;
+  if(Notification.permission === 'default'){
+    const banner = document.getElementById('notif-banner-suivi');
+    if(banner) banner.style.display = 'flex';
+  }
+}
+
+async function allowNotifSuivi(){
+  const perm = await Notification.requestPermission();
+  const banner = document.getElementById('notif-banner-suivi');
+  if(banner) banner.style.display = 'none';
+  if(perm === 'granted'){
+    const ok = document.getElementById('notif-ok-suivi');
+    if(ok){ ok.style.display='block'; setTimeout(()=>ok.style.display='none', 3000); }
+  }
+}
+
+function renderOrder(o){
+  const STATUS={
+    pending:{icon:'\u23F3',title:'Commande re\u00e7ue',sub:'Votre demande a bien \u00e9t\u00e9 transmise. Notre \u00e9quipe va examiner votre demande et confirmer la disponibilit\u00e9.',color:'rgba(201,146,42,.8)'},
+    accepted:{icon:'\u2705',title:'Commande accept\u00e9e !',sub:'Votre commande est confirm\u00e9e et sera pr\u00e9par\u00e9e pour votre retrait.',color:'#5cb85c'},
+    ready:{icon:'\uD83C\uDF89',title:'Pr\u00eate \u00e0 retirer !',sub:'Votre commande est pr\u00eate. Vous pouvez venir la r\u00e9cup\u00e9rer en magasin.',color:'#5cb85c'},
+    refused:{icon:'\u274C',title:'Commande non disponible',sub:'Nous sommes d\u00e9sol\u00e9s, cette commande ne peut pas \u00eatre honor\u00e9e en l\u2019\u00e9tat.',color:'#c0392b'},
+  };
+  tryNotify(o);
+  const st=STATUS[o.status]||STATUS.pending;
+  const steps=[
+    {key:'pending',label:'Commande reçue',date:o.createdAt},
+    {key:'accepted',label:'Commande acceptée',date:o.acceptedAt||null},
+    {key:'ready',label:'Prête à retirer',date:o.readyAt||null},
+  ];
+  const statusOrder=['pending','accepted','ready'];
+  const curIdx=statusOrder.indexOf(o.status);
+
+  document.getElementById('main-content').innerHTML=`
+    <div class="card">
+      <div class="ref-lbl">Référence commande</div>
+      <div class="ref-val">#${o.ref||orderId.slice(-6).toUpperCase()}</div>
+      <div style="font-size:12px;color:rgba(201,146,42,.4);margin-top:4px;">${o.civilite||''} ${o.prenom} ${o.nom}</div>
+    </div>
+
+    <div class="card">
+      <div class="status-wrap">
+        <span class="status-icon">${st.icon}</span>
+        <div class="status-title">${st.title}</div>
+        <div class="status-sub">${st.sub}</div>
+        ${o.vendeurMessage?`<div class="status-msg">"${o.vendeurMessage}"</div>`:''}
+      </div>
+    </div>
+
+    ${o.status!=='refused'?`<div class="card">
+      <div style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:rgba(201,146,42,.45);margin-bottom:14px;">Suivi de commande</div>
+      <div class="timeline">
+        ${steps.map((s,i)=>{
+          const isDone=i<curIdx||(i===curIdx&&o.status!=='pending');
+          const isActive=i===curIdx;
+          const isPending=i>curIdx;
+          const dotClass=isDone?'done':isActive?'active':'pending';
+          const icon=isDone?'✓':isActive?'◉':'○';
+          return`<div class="tl-step">
+            <div class="tl-dot ${dotClass}">${icon}</div>
+            <div class="tl-content">
+              <div class="tl-title${isPending?' pending':''}">${s.label}</div>
+              <div class="tl-date">${s.date?fdShort(s.date):isPending?'En attente…':'—'}</div>
+            </div>
+          </div>`;
+        }).join('')}
+      </div>
+      ${o.creneauDate&&o.creneauHeure?`<div class="creneau-block">
+        <div class="creneau-lbl">Créneau de retrait souhaité</div>
+        <div class="creneau-val">📅 ${fd(o.creneauDate)} à ${o.creneauHeure}</div>
+      </div>`:''}
+    </div>`:''}
+
+    <div class="card">
+      <div style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:rgba(201,146,42,.45);margin-bottom:12px;">Détail de la demande</div>
+      ${[
+        ['Occasion',o.occasion||'—'],
+        ['Type de vin',o.type||'—'],
+        ['Accord mets',o.plat||'—'],
+        ['Budget',o.budget||'—'],
+        ['Note',o.note||'—'],
+        ['Téléphone',o.tel||'—'],
+      ].map(([k,v])=>`<div class="detail-row"><span class="dk">${k}</span><span class="dv">${v}</span></div>`).join('')}
+    </div>
+
+    <button class="refresh-btn" onclick="window.location.reload()">🔄 Actualiser le statut</button>
+    <div style="text-align:center;font-size:11px;color:rgba(201,146,42,.3);margin-top:12px;">Mettez cette page en favori pour suivre votre commande</div>
+  `;
+}
+window.allowNotifSuivi=allowNotifSuivi;
+</script>
+</body>
+</html>
