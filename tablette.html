@@ -332,6 +332,10 @@ textarea{resize:none;height:72px;margin-bottom:16px;}
 <body>
 <div class="bg"></div>
 <div class="wrap">
+  <div class="app-header" id="app-header" style="display:none;">
+    <div style="font-family:'Playfair Display',serif;font-size:14px;color:#c9922a;letter-spacing:.02em;">Le Nombre Vin</div>
+    <button class="btn-quit-header" onclick="doQuit()">&#10005; Quitter</button>
+  </div>
   <div class="quit-modal-bg" id="quit-modal-bg">
     <div class="quit-modal">
       <div class="qm-title">Quitter ?</div>
@@ -993,9 +997,9 @@ function copyLink(){
 }
 
 function doReset(){
-  curUser=null;selCivValue=null;selMode_val=null;selDate=null;selHeure_val=null;orderRef=null;selectedWine=null;
+  curUser=null;selCivValue=null;selMode_val=null;selDate=null;selHeure_val=null;orderRef=null;selectedWine=null;_wineChoices=[];
   Object.keys(ss).forEach(k=>ss[k]=null);
-  ['i-prenom','i-nom','i-note','i-tel','i-email'].forEach(id=>{const e=document.getElementById(id);if(e)e.value=''});
+  ['i-prenom','i-nom','i-note','i-tel','i-email','i-tel-new','i-tel-login'].forEach(id=>{const e=document.getElementById(id);if(e)e.value=''});
   document.querySelectorAll('.chip,.bud,.civ-btn,.mode-card,.date-chip,.heure-chip').forEach(c=>c.classList.remove('on'));
   document.getElementById('tel-block').style.display='none';
   window._nouveautesReady=false;
@@ -1081,22 +1085,35 @@ function buildWineChoices() {
     .slice(0, 3);
 
   const el = document.getElementById('wine-choices-list');
-  el.innerHTML = scored.map((w, i) => `
-    <div class="wine-choice-card" id="wc-${i}" onclick="selectWineChoice(${i}, '${w.nom.replace(/'/g,"\'")}', ${w.prix}, '${w.type}', '${w.region}')">
-      <div class="wc-check">✓</div>
-      <div class="wc-num">${i+1}</div>
-      <div class="wc-name">🍷 ${w.nom}</div>
-      <div class="wc-meta">${w.region} · ${w.type}</div>
-      <div class="wc-prix">${w.prix}€</div>
-      ${w.stars >= 4 ? `<div class="wc-stars">${'★'.repeat(w.stars)} Coup de cœur</div>` : ''}
-      ${w.nouveaute ? '<div style="font-size:10px;color:#c9922a;margin-top:3px;">✦ Nouveauté</div>' : ''}
-    </div>`).join('') + `
+  _wineChoices = scored;
+  el.innerHTML = scored.map((w, i) => {
+    const starsHtml = w.stars >= 4 ? '<div class="wc-stars">' + Array(w.stars+1).join('&#9733;') + ' Coup de coeur</div>' : '';
+    const nouvHtml = w.nouveaute ? '<div style="font-size:10px;color:#c9922a;margin-top:3px;">&#10022; Nouveaute</div>' : '';
+    return '<div class="wine-choice-card" id="wc-'+i+'" onclick="selectWineChoiceByIdx('+i+')">'
+      +'<div class="wc-check">&#10003;</div>'
+      +'<div class="wc-num">'+(i+1)+'</div>'
+      +'<div class="wc-name">&#127863; '+w.nom+'</div>'
+      +'<div class="wc-meta">'+w.region+' &middot; '+w.type+'</div>'
+      +'<div class="wc-prix">'+w.prix+'&euro;</div>'
+      +starsHtml+nouvHtml
+      +'</div>';
+  }).join('') + `
     <div class="wine-choice-card caviste" id="wc-caviste" onclick="selectWineChoice('caviste', 'Laissons le caviste choisir', 0, '', '')">
       <div class="wc-check">✓</div>
       <div class="wc-num caviste-num">🎩</div>
       <div class="wc-name">Laissons le caviste choisir !</div>
       <div class="wc-meta" style="font-style:italic;color:rgba(201,146,42,.5);">Notre équipe sélectionnera le vin idéal selon votre profil et nos arrivages du moment</div>
     </div>`;
+}
+
+let _wineChoices = [];
+
+function selectWineChoiceByIdx(idx) {
+  document.querySelectorAll('.wine-choice-card').forEach(c => c.classList.remove('on'));
+  const card = document.getElementById('wc-'+idx);
+  if(card) card.classList.add('on');
+  const w = _wineChoices[idx];
+  if(w) selectedWine = { nom:w.nom, prix:w.prix, type:w.type, region:w.region, caviste:false };
 }
 
 function selectWineChoice(idx, nom, prix, type, region) {
@@ -2007,7 +2024,7 @@ function initChatListener(){
 
 window.doLogin=doLogin;window.demoLogin=demoLogin;window.doReset=doReset;window.doSubmit=doSubmit;
 window.sel=sel;window.selBud=selBud;window.selCiv=selCiv;window.selMode=selMode;window.doMode=doMode;
-window.afterQuestions=afterQuestions;window.setScore=setScore;window.submitScore=submitScore;window.openScoring=openScoring;window.showMesAvis=showMesAvis;window.loadEvents=loadEvents;window.filterEvts=filterEvts;window.inscrireEvent=inscrireEvent;window.showMaCave=showMaCave;window.doQuit=doQuit;window.confirmQuit=confirmQuit;window.cancelQuit=cancelQuit;window.emailSuiviLink=emailSuiviLink;window.selLoginMode=selLoginMode;window.toggleRemember=toggleRemember;window.buildHeureGrid=buildHeureGrid;window.showMesCommandes=showMesCommandes;window.showMessages=showMessages;window.sendClientMessage=sendClientMessage;window.attachChatPhoto=attachChatPhoto;window.removeChatPhoto=removeChatPhoto;window.autoResizeChat=autoResizeChat;window.requestPushPermission=requestPushPermission;window.doLoginByTel=doLoginByTel;window.searchCaveWine=searchCaveWine;window.selectCaveWine=selectCaveWine;window.setAddScore=setAddScore;window.cancelCaveAdd=cancelCaveAdd;window.addToCavePerso=addToCavePerso;window.filterCave=filterCave;window.openPersonalScoring=openPersonalScoring;window.doWineChoice=doWineChoice;window.selectWineChoice=selectWineChoice;window.buildWineChoices=buildWineChoices;window.selHeure=selHeure;window.showScr=showScr;window.copyLink=copyLink;
+window.afterQuestions=afterQuestions;window.setScore=setScore;window.submitScore=submitScore;window.openScoring=openScoring;window.showMesAvis=showMesAvis;window.loadEvents=loadEvents;window.filterEvts=filterEvts;window.inscrireEvent=inscrireEvent;window.showMaCave=showMaCave;window.doQuit=doQuit;window.confirmQuit=confirmQuit;window.cancelQuit=cancelQuit;window.emailSuiviLink=emailSuiviLink;window.selLoginMode=selLoginMode;window.toggleRemember=toggleRemember;window.buildHeureGrid=buildHeureGrid;window.showMesCommandes=showMesCommandes;window.showMessages=showMessages;window.sendClientMessage=sendClientMessage;window.attachChatPhoto=attachChatPhoto;window.removeChatPhoto=removeChatPhoto;window.autoResizeChat=autoResizeChat;window.requestPushPermission=requestPushPermission;window.doLoginByTel=doLoginByTel;window.searchCaveWine=searchCaveWine;window.selectCaveWine=selectCaveWine;window.setAddScore=setAddScore;window.cancelCaveAdd=cancelCaveAdd;window.addToCavePerso=addToCavePerso;window.filterCave=filterCave;window.openPersonalScoring=openPersonalScoring;window.doWineChoice=doWineChoice;window.selectWineChoice=selectWineChoice;window.selectWineChoiceByIdx=selectWineChoiceByIdx;window.buildWineChoices=buildWineChoices;window.selHeure=selHeure;window.showScr=showScr;window.copyLink=copyLink;
 </script>
 </body>
 </html>
