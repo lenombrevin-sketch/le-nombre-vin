@@ -408,7 +408,10 @@ textarea{resize:none;height:72px;margin-bottom:16px;}
         <img class="welcome-logo-small" src="logo-lnv-opt.png" alt="Le Nombre Vin">
         <div class="welcome-msg" id="welcome-msg">Bienvenue,<br><em>M. Dupont</em></div>
         <div class="welcome-sub" id="welcome-sub">Première visite</div>
-        <div class="badge-gold" id="welcome-badge">🍷 &nbsp;Votre conseiller vous attend</div>
+        <div style="display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:4px;">
+        <div class="badge-gold" id="welcome-badge" style="margin-bottom:0;">🍷 &nbsp;Votre conseiller vous attend</div>
+        <button onclick="doQuit()" style="background:rgba(180,60,60,.2);border:1px solid rgba(220,80,80,.3);border-radius:100px;padding:7px 14px;font-size:11px;font-weight:700;color:rgba(255,140,140,.8);cursor:pointer;font-family:'Lato',sans-serif;white-space:nowrap;flex-shrink:0;">&#10005; Quitter</button>
+      </div>
       </div>
       <div id="nouveautes-section" style="display:none;margin-bottom:20px;">
         <div class="sec-lbl">Nouveautés de la cave</div>
@@ -435,7 +438,6 @@ textarea{resize:none;height:72px;margin-bottom:16px;}
       <button class="btn-mes-avis" onclick="showMaCave()" style="margin-top:6px;background:rgba(42,110,42,.1);border-color:rgba(100,180,100,.2);color:rgba(120,200,120,.8);">&#127870; &nbsp;Ma cave personnelle <span id="cave-perso-badge" style="display:none;background:#2a6e2a;color:#fff;border-radius:100px;padding:1px 7px;font-size:10px;font-weight:700;"></span></button>
       <button class="btn-mes-avis" onclick="showScr('s-events');loadEvents()" style="margin-top:6px;background:rgba(42,80,139,.12);border-color:rgba(100,140,220,.25);color:rgba(140,180,240,.8);">📅 &nbsp;Agenda &amp; événements <span id="events-badge" style="display:none;background:#4a7dbf;color:#fff;border-radius:100px;padding:1px 7px;font-size:10px;font-weight:700;"></span></button>
       <button class="btn-mes-avis" onclick="showMesAvis()">⭐ &nbsp;Mes avis sur les vins <span id="avis-badge" style="display:none;background:#c9922a;color:#0a0604;border-radius:100px;padding:1px 7px;font-size:10px;font-weight:700;"></span></button>
-      <button onclick="doQuit()" style="width:100%;margin-top:16px;background:transparent;border:1px solid rgba(201,146,42,.2);border-radius:12px;padding:13px;font-size:13px;color:rgba(201,146,42,.5);cursor:pointer;font-family:'Lato',sans-serif;letter-spacing:.04em;">&#10005; &nbsp;Se déconnecter</button>
     </div>
 
 
