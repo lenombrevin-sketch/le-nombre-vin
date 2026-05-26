@@ -16,7 +16,7 @@
 html,body{min-height:100%;background:#0a0604;}
 body{font-family:'Lato',sans-serif;color:#f0e6d0;min-height:100vh;overflow-x:hidden;}
 .bg{position:fixed;inset:0;z-index:0;background:radial-gradient(ellipse 80% 60% at 50% 0%,rgba(180,120,40,.18) 0%,transparent 70%),#0a0604;}
-.wrap{position:relative;z-index:2;min-height:100vh;display:flex;flex-direction:column;align-items:center;}
+.wrap{position:relative;z-index:2;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding-top:0;}
 main{width:100%;max-width:480px;padding:0 20px 48px;flex:1;display:flex;flex-direction:column;}
 .scr{display:none;flex-direction:column;flex:1;}
 .scr.on{display:flex;}
@@ -240,7 +240,7 @@ textarea{resize:none;height:72px;margin-bottom:16px;}
 .cstat-l{font-size:10px;color:rgba(201,146,42,.45);margin-top:2px;text-transform:uppercase;letter-spacing:.06em;}
 
 /* BOUTON QUITTER */
-.app-header{width:100%;background:rgba(8,4,1,.9);border-bottom:1px solid rgba(201,146,42,.2);padding:12px 18px;display:flex;align-items:center;justify-content:space-between;position:relative;z-index:10;-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);}
+.app-header{width:100%;background:rgba(8,4,1,.95);border-bottom:1px solid rgba(201,146,42,.25);padding:12px 18px;display:flex;align-items:center;justify-content:space-between;position:fixed;top:0;left:0;right:0;z-index:9999;-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);box-shadow:0 2px 12px rgba(0,0,0,.4);}
 .btn-quit-header{background:rgba(139,69,19,.3);border:1px solid rgba(201,146,42,.35);border-radius:100px;padding:7px 16px;font-size:12px;font-weight:700;color:rgba(201,146,42,.85);cursor:pointer;font-family:'Lato',sans-serif;-webkit-appearance:none;}
 .btn-quit-header:active{background:rgba(139,69,19,.6);}
 /* QUIT MODAL */
@@ -825,6 +825,7 @@ async function loginUser(civ,p,n,tel){
   const badge = document.getElementById('avis-badge');
   if(badge){badge.style.display=unscoredCount?'inline':'none';badge.textContent=unscoredCount;}
   showScr('s-welcome');
+  updateHeader();
 }
 
 function loadNouveautes(){
@@ -1030,9 +1031,18 @@ function showScr(id){
   document.querySelectorAll('.scr').forEach(s=>s.classList.remove('on'));
   document.getElementById(id).classList.add('on');
   window.scrollTo(0,0);
-  // Show header with quit button on all screens except login
+  updateHeader();
+}
+
+function updateHeader(){
   const hd = document.getElementById('app-header');
-  if(hd) hd.style.display = (id !== 's-login') ? 'flex' : 'none';
+  if(!hd) return;
+  const onLogin = document.getElementById('s-login').classList.contains('on');
+  const show = (!onLogin && curUser);
+  hd.style.display = show ? 'flex' : 'none';
+  // Add top padding to main to avoid content hidden behind fixed header
+  const main = document.querySelector('main');
+  if(main) main.style.paddingTop = show ? '56px' : '0';
 }
 
 
@@ -2024,7 +2034,7 @@ function initChatListener(){
 
 window.doLogin=doLogin;window.demoLogin=demoLogin;window.doReset=doReset;window.doSubmit=doSubmit;
 window.sel=sel;window.selBud=selBud;window.selCiv=selCiv;window.selMode=selMode;window.doMode=doMode;
-window.afterQuestions=afterQuestions;window.setScore=setScore;window.submitScore=submitScore;window.openScoring=openScoring;window.showMesAvis=showMesAvis;window.loadEvents=loadEvents;window.filterEvts=filterEvts;window.inscrireEvent=inscrireEvent;window.showMaCave=showMaCave;window.doQuit=doQuit;window.confirmQuit=confirmQuit;window.cancelQuit=cancelQuit;window.emailSuiviLink=emailSuiviLink;window.selLoginMode=selLoginMode;window.toggleRemember=toggleRemember;window.buildHeureGrid=buildHeureGrid;window.showMesCommandes=showMesCommandes;window.showMessages=showMessages;window.sendClientMessage=sendClientMessage;window.attachChatPhoto=attachChatPhoto;window.removeChatPhoto=removeChatPhoto;window.autoResizeChat=autoResizeChat;window.requestPushPermission=requestPushPermission;window.doLoginByTel=doLoginByTel;window.searchCaveWine=searchCaveWine;window.selectCaveWine=selectCaveWine;window.setAddScore=setAddScore;window.cancelCaveAdd=cancelCaveAdd;window.addToCavePerso=addToCavePerso;window.filterCave=filterCave;window.openPersonalScoring=openPersonalScoring;window.doWineChoice=doWineChoice;window.selectWineChoice=selectWineChoice;window.selectWineChoiceByIdx=selectWineChoiceByIdx;window.buildWineChoices=buildWineChoices;window.selHeure=selHeure;window.showScr=showScr;window.copyLink=copyLink;
+window.afterQuestions=afterQuestions;window.setScore=setScore;window.submitScore=submitScore;window.openScoring=openScoring;window.showMesAvis=showMesAvis;window.loadEvents=loadEvents;window.filterEvts=filterEvts;window.inscrireEvent=inscrireEvent;window.showMaCave=showMaCave;window.doQuit=doQuit;window.confirmQuit=confirmQuit;window.cancelQuit=cancelQuit;window.updateHeader=updateHeader;window.emailSuiviLink=emailSuiviLink;window.selLoginMode=selLoginMode;window.toggleRemember=toggleRemember;window.buildHeureGrid=buildHeureGrid;window.showMesCommandes=showMesCommandes;window.showMessages=showMessages;window.sendClientMessage=sendClientMessage;window.attachChatPhoto=attachChatPhoto;window.removeChatPhoto=removeChatPhoto;window.autoResizeChat=autoResizeChat;window.requestPushPermission=requestPushPermission;window.doLoginByTel=doLoginByTel;window.searchCaveWine=searchCaveWine;window.selectCaveWine=selectCaveWine;window.setAddScore=setAddScore;window.cancelCaveAdd=cancelCaveAdd;window.addToCavePerso=addToCavePerso;window.filterCave=filterCave;window.openPersonalScoring=openPersonalScoring;window.doWineChoice=doWineChoice;window.selectWineChoice=selectWineChoice;window.selectWineChoiceByIdx=selectWineChoiceByIdx;window.buildWineChoices=buildWineChoices;window.selHeure=selHeure;window.showScr=showScr;window.copyLink=copyLink;
 </script>
 </body>
 </html>
