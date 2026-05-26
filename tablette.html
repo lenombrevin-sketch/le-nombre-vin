@@ -404,12 +404,15 @@ textarea{resize:none;height:72px;margin-bottom:16px;}
 
     <!-- WELCOME -->
     <div id="s-welcome" class="scr">
+      <div style="display:flex;justify-content:flex-end;padding:8px 0 0;">
+        <button onclick="doQuit()" style="background:rgba(139,30,30,.25);border:1px solid rgba(220,80,80,.3);border-radius:100px;padding:8px 18px;font-size:12px;font-weight:700;color:rgba(255,150,150,.8);cursor:pointer;font-family:'Lato',sans-serif;">&#10005; Quitter</button>
+      </div>
       <div style="text-align:center;padding:20px 0 14px;">
         <img class="welcome-logo-small" src="logo-lnv-opt.png" alt="Le Nombre Vin">
         <div class="welcome-msg" id="welcome-msg">Bienvenue,<br><em>M. Dupont</em></div>
         <div class="welcome-sub" id="welcome-sub">Première visite</div>
         <div class="badge-gold" id="welcome-badge" style="margin-bottom:12px;">🍷 &nbsp;Votre conseiller vous attend</div>
-      <button id="btn-deconnexion" onclick="doQuit()" style="background:rgba(180,60,60,.15);border:1px solid rgba(220,80,80,.25);border-radius:100px;padding:8px 20px;font-size:12px;font-weight:700;color:rgba(255,140,140,.75);cursor:pointer;font-family:'Lato',sans-serif;margin-bottom:16px;">&#10005; &nbsp;Se d&eacute;connecter</button>
+      
       </div>
       <div id="nouveautes-section" style="display:none;margin-bottom:20px;">
         <div class="sec-lbl">Nouveautés de la cave</div>
