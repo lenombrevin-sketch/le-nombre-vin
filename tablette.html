@@ -783,6 +783,15 @@ async function doLogin(){
   const p=document.getElementById('i-prenom').value.trim();
   const n=document.getElementById('i-nom').value.trim();
   if(!p||!n){alert('Merci de saisir votre prénom et nom.');return;}
+  // Wait for Firebase to be ready
+  if(!window._fbReady || !window._get){
+    let attempts=0;
+    while(!window._fbReady && attempts<20){
+      await new Promise(r=>setTimeout(r,200));
+      attempts++;
+    }
+    if(!window._fbReady){ alert('Connexion en cours, veuillez réessayer.'); return; }
+  }
   const tel=document.getElementById('i-tel-new')?.value.trim()||'';
   await loginUser(selCivValue,p,n,tel);
 }
@@ -792,8 +801,14 @@ async function demoLogin(){
 }
 
 async function loginUser(civ,p,n,tel){
+  // Sanitize inputs - trim and fallback
+  p = (p||'').trim();
+  n = (n||'').trim();
+  civ = civ||'M.';
+  tel = (tel||'').trim();
+  if(!p||!n){ alert('Prénom et nom requis.'); return; }
   const key=(p+'_'+n).toLowerCase()
-    .normalize('NFD').replace(/[\u0300-\u036f]/g,'')  // remove accents
+    .normalize('NFD').replace(/[\u0300-\u036f]/g,'')
     .replace(/[^a-z0-9]+/g,'_')
     .replace(/^_+|_+$/g,'')
     .slice(0,40) || 'client_'+Date.now();
@@ -935,9 +950,14 @@ async function doSubmit(){
   orderRef=genRef();
   const orderId='ord_'+Date.now();
   const isDistance=selMode_val==='distance';
+  // Ensure key exists before creating visit
+  if(!curUser.key){
+    const p2=curUser.prenom||'client',n2=curUser.nom||Date.now().toString();
+    curUser.key=(p2+'_'+n2).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'_').replace(/^_+|_+$/g,'').slice(0,40)||'client_'+Date.now();
+  }
   const visit={
     id:Date.now(),userId:curUser.key,civilite:curUser.civilite,
-    prenom:curUser.prenom,nom:curUser.nom,
+    prenom:curUser.prenom||'',nom:curUser.nom||'',
     timestamp:new Date().toISOString(),
     mode:selMode_val,
     wineChoice:selectedWine,
@@ -953,12 +973,19 @@ async function doSubmit(){
     creneauDate:selDate,creneauHeure:selHeure_val,
     status:'pending',createdAt:new Date().toISOString()
   }:null;
+  if(!curUser){ alert('Erreur: session expirée, veuillez vous réidentifier.'); showScr('s-login'); return; }
+  if(!curUser.key){
+    const p2=curUser.prenom||'',n2=curUser.nom||'';
+    curUser.key=(p2+'_'+n2).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'_').replace(/^_+|_+$/g,'').slice(0,40)||'client_'+Date.now();
+  }
   curUser.visites=(curUser.visites||0)+1;
   curUser.lastVisit=new Date().toISOString().slice(0,10);
   if(!curUser.historique)curUser.historique=[];
   curUser.historique.push({timestamp:visit.timestamp,occasion:ss.occ,type:ss.type,plat:ss.plat,budget:ss.budget,note,mode:selMode_val});
   try{
     await window._set(window._ref(window._db,'clients/'+curUser.key),curUser);
+    // Small delay to ensure client is written before vendor reads it
+    await new Promise(r=>setTimeout(r,300));
     await window._set(window._ref(window._db,'pending_visit'),visit);
     if(order)await window._set(window._ref(window._db,'orders/'+orderId),order);
   }catch(e){console.error(e);}
@@ -986,7 +1013,7 @@ function showConfirm(isDistance,orderId,order){
     suiviBlock.style.display='none';
   }
   const rows=[
-    ['Client',(curUser.civilite||'')+' '+curUser.prenom+' '+curUser.nom],
+    ['Client',(curUser?.civilite||'')+' '+(curUser?.prenom||'')+' '+(curUser?.nom||'')],
     ['Occasion',ss.occ||'—'],
     ['Vin choisi',selectedWine?selectedWine.nom:ss.type||'—'],
     ['Accord',ss.plat||'—'],['Budget',ss.budget||'—'],
@@ -1649,6 +1676,11 @@ function selLoginMode(mode){
 async function doLoginByTel(){
   const tel = document.getElementById('i-tel-login').value.trim().replace(/\s/g,'');
   if(!tel || tel.length < 6){ alert('Merci de saisir votre numéro de téléphone.'); return; }
+  if(!window._fbReady || !window._get){
+    let attempts=0;
+    while(!window._fbReady && attempts<20){ await new Promise(r=>setTimeout(r,200)); attempts++; }
+    if(!window._fbReady){ alert('Connexion en cours, veuillez réessayer.'); return; }
+  }
   document.getElementById('tel-not-found').style.display = 'none';
 
   // Search all clients for matching tel
@@ -1913,7 +1945,7 @@ function showMessages(){
 }
 
 function listenMessages(){
-  if(!curUser || !window._db || !window._onValue) return;
+  if(!curUser || !curUser.key || !window._db || !window._onValue) return;
   if(chatListener) return; // already listening
   chatListener = window._onValue(
     window._ref(window._db, 'messages/' + curUser.key),
@@ -2014,6 +2046,12 @@ async function sendClientMessage(){
   const text = inp?.value.trim() || '';
   if(!text && !chatPhotoB64){ return; }
   if(!curUser || !window._db){ alert('Connexion requise.'); return; }
+  // Ensure key exists
+  if(!curUser.key){
+    const p = curUser.prenom||'';
+    const n = curUser.nom||'';
+    curUser.key = (p+'_'+n).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'_').replace(/^_+|_+$/g,'').slice(0,40) || 'client_'+Date.now();
+  }
   const msgId = 'msg_' + Date.now();
   const msg = {
     id: msgId,
