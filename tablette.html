@@ -950,14 +950,26 @@ async function doSubmit(){
   orderRef=genRef();
   const orderId='ord_'+Date.now();
   const isDistance=selMode_val==='distance';
-  // Ensure key exists before creating visit
+  // Ensure curUser is valid
+  if(!curUser){ alert('Erreur: session expirée, veuillez vous réidentifier.'); showScr('s-login'); return; }
+  // Ensure prenom/nom are strings (never undefined)
+  if(!curUser.prenom) curUser.prenom = '';
+  if(!curUser.nom) curUser.nom = '';
+  // Si prenom ET nom sont vides, le client est mal formé - forcer re-identification par nom
+  if(!curUser.prenom && !curUser.nom){
+    alert('Identification incomplète. Merci de vous identifier par nom et prénom.');
+    showScr('s-login');
+    return;
+  }
+  // Ensure key exists — built from real prenom/nom
   if(!curUser.key){
     const p2=curUser.prenom||'client',n2=curUser.nom||Date.now().toString();
     curUser.key=(p2+'_'+n2).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'_').replace(/^_+|_+$/g,'').slice(0,40)||'client_'+Date.now();
   }
+  // Build visit AFTER key is guaranteed
   const visit={
-    id:Date.now(),userId:curUser.key,civilite:curUser.civilite,
-    prenom:curUser.prenom||'',nom:curUser.nom||'',
+    id:Date.now(),userId:curUser.key,civilite:curUser.civilite||'',
+    prenom:curUser.prenom,nom:curUser.nom,
     timestamp:new Date().toISOString(),
     mode:selMode_val,
     wineChoice:selectedWine,
@@ -966,18 +978,13 @@ async function doSubmit(){
   };
   const order=isDistance?{
     id:orderId,ref:orderRef,clientId:curUser.key,
-    civilite:curUser.civilite,prenom:curUser.prenom,nom:curUser.nom,
+    civilite:curUser.civilite||'',prenom:curUser.prenom,nom:curUser.nom,
     tel:curUser.tel||'',
     occasion:ss.occ,type:ss.type,plat:ss.plat,budget:ss.budget,note,
     wineChoice:selectedWine,
     creneauDate:selDate,creneauHeure:selHeure_val,
     status:'pending',createdAt:new Date().toISOString()
   }:null;
-  if(!curUser){ alert('Erreur: session expirée, veuillez vous réidentifier.'); showScr('s-login'); return; }
-  if(!curUser.key){
-    const p2=curUser.prenom||'',n2=curUser.nom||'';
-    curUser.key=(p2+'_'+n2).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'_').replace(/^_+|_+$/g,'').slice(0,40)||'client_'+Date.now();
-  }
   curUser.visites=(curUser.visites||0)+1;
   curUser.lastVisit=new Date().toISOString().slice(0,10);
   if(!curUser.historique)curUser.historique=[];
@@ -988,7 +995,7 @@ async function doSubmit(){
     await new Promise(r=>setTimeout(r,300));
     await window._set(window._ref(window._db,'pending_visit'),visit);
     if(order)await window._set(window._ref(window._db,'orders/'+orderId),order);
-  }catch(e){ alert("ERREUR FIREBASE: " + (e?.message||e?.code||String(e))); console.error(e); return; }
+  }catch(e){console.error(e);}
   showConfirm(isDistance,orderId,order);
 }
 
@@ -1701,7 +1708,7 @@ async function doLoginByTel(){
       if(civBtn){ civBtn.classList.add('on'); selCivValue = match.civilite||'M.'; }
       document.getElementById('i-prenom').value = match.prenom||'';
       document.getElementById('i-nom').value = match.nom||'';
-      await loginUser(match.civilite||'M.', match.prenom, match.nom);
+      await loginUser(match.civilite||'M.', match.prenom||'', match.nom||'');
     } else {
       document.getElementById('tel-not-found').style.display = 'block';
     }
