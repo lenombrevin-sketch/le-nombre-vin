@@ -692,7 +692,7 @@ function showF(uid,isLive){
     <div class="fiche-header">
       <div class="fav">${ini(client.prenom||'?',client.nom||'?')}</div>
       <div>
-        <div class="fiche-name">${client.civilite||''} ${client.prenom||'?'} ${client.nom||'?'}</div>
+        <div class="fiche-name">${client.civilite||civ} ${client.prenom||visit?.prenom||'?'} ${client.nom||visit?.nom||'?'}</div>
         <div class="fiche-meta">${nb} visite${nb>1?'s':''} · CA : ${ca}€ · Dernière : ${fd(client.lastVisit)}</div>
       </div>
     <button class="vb-g" style="font-size:10px;padding:4px 10px;margin-top:6px;" onclick="sendClientLink('${uid}','${(client.email||'')}','${(client.civilite||'')}','${client.prenom}','${client.nom}')">📧 Envoyer le lien</button>
