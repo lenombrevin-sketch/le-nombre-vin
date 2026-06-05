@@ -658,7 +658,7 @@ function rdrQ(visit){
   const civ=visit.civilite||'';
   el.innerHTML=`<div class="ci on" style="position:relative;cursor:pointer" onclick="showF('${visit.userId}',true)">
     <div class="ci-b">Nouveau</div>
-    <div class="ci-n">${civ} ${visit.nom}</div>
+    <div class="ci-n">${civ} ${visit.prenom||''} ${visit.nom||''}</div>
     <div class="ci-t">${ts(visit.timestamp)}</div></div>`;
 }
 
@@ -679,7 +679,7 @@ function showF(uid,isLive){
   const civ=visit?.civilite||client.civilite||'';
   if(isLive&&visit){
     lsec.innerHTML=`<div class="la"><div class="la-i">🔔</div><div>
-      <div class="la-t">En magasin — ${civ} ${visit.nom}</div>
+      <div class="la-t">En magasin — ${civ} ${visit.prenom||''} ${visit.nom||''}</div>
       <div class="la-s">${client.visites>1?'Client fidèle · '+client.visites+' visites':'Première visite'}</div>
     </div><div class="la-ts">${ts(visit.timestamp)}</div></div>`;
   }
