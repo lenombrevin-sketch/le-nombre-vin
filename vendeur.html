@@ -534,8 +534,20 @@ window._db=db;window._ref=ref;window._set=set;window._get=get;
 document.getElementById('sync-dot').style.background='#5cb85c';
 document.getElementById('sync-lbl').textContent='Synchronisé';
 onValue(ref(db,'pending_visit'),(snap)=>{
-  window._pendingVisit=snap.val();rdrQ(window._pendingVisit);
-  if(window._pendingVisit?.userId){showF(window._pendingVisit.userId,true);sw('accueil',document.querySelector('.tab'));}
+  window._pendingVisit=snap.val();
+  rdrQ(window._pendingVisit);
+  if(window._pendingVisit?.userId){
+    // Wait for clients to be loaded before showing fiche
+    const tryShow=()=>{
+      if(window._clients && Object.keys(window._clients).length > 0){
+        showF(window._pendingVisit.userId,true);
+        sw('accueil',document.querySelector('.tab'));
+      } else {
+        setTimeout(tryShow, 500);
+      }
+    };
+    setTimeout(tryShow, 300);
+  }
 });
 onValue(ref(db,'clients'),(snap)=>{
   window._clients=snap.val()||{};rdrSCards();
