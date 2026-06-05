@@ -950,20 +950,14 @@ async function doSubmit(){
   orderRef=genRef();
   const orderId='ord_'+Date.now();
   const isDistance=selMode_val==='distance';
-  // Ensure curUser is valid
-  if(!curUser){ alert('Erreur: session expirée, veuillez vous réidentifier.'); showScr('s-login'); return; }
-  // Ensure prenom/nom are strings (never undefined)
-  if(!curUser.prenom) curUser.prenom = '';
-  if(!curUser.nom) curUser.nom = '';
-  // Ensure key exists — built from real prenom/nom
+  // Ensure key exists before creating visit
   if(!curUser.key){
     const p2=curUser.prenom||'client',n2=curUser.nom||Date.now().toString();
     curUser.key=(p2+'_'+n2).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'_').replace(/^_+|_+$/g,'').slice(0,40)||'client_'+Date.now();
   }
-  // Build visit AFTER key is guaranteed
   const visit={
-    id:Date.now(),userId:curUser.key,civilite:curUser.civilite||'',
-    prenom:curUser.prenom,nom:curUser.nom,
+    id:Date.now(),userId:curUser.key,civilite:curUser.civilite,
+    prenom:curUser.prenom||'',nom:curUser.nom||'',
     timestamp:new Date().toISOString(),
     mode:selMode_val,
     wineChoice:selectedWine,
@@ -972,13 +966,18 @@ async function doSubmit(){
   };
   const order=isDistance?{
     id:orderId,ref:orderRef,clientId:curUser.key,
-    civilite:curUser.civilite||'',prenom:curUser.prenom,nom:curUser.nom,
+    civilite:curUser.civilite,prenom:curUser.prenom,nom:curUser.nom,
     tel:curUser.tel||'',
     occasion:ss.occ,type:ss.type,plat:ss.plat,budget:ss.budget,note,
     wineChoice:selectedWine,
     creneauDate:selDate,creneauHeure:selHeure_val,
     status:'pending',createdAt:new Date().toISOString()
   }:null;
+  if(!curUser){ alert('Erreur: session expirée, veuillez vous réidentifier.'); showScr('s-login'); return; }
+  if(!curUser.key){
+    const p2=curUser.prenom||'',n2=curUser.nom||'';
+    curUser.key=(p2+'_'+n2).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'_').replace(/^_+|_+$/g,'').slice(0,40)||'client_'+Date.now();
+  }
   curUser.visites=(curUser.visites||0)+1;
   curUser.lastVisit=new Date().toISOString().slice(0,10);
   if(!curUser.historique)curUser.historique=[];
@@ -989,7 +988,7 @@ async function doSubmit(){
     await new Promise(r=>setTimeout(r,300));
     await window._set(window._ref(window._db,'pending_visit'),visit);
     if(order)await window._set(window._ref(window._db,'orders/'+orderId),order);
-  }catch(e){console.error(e);}
+  }catch(e){ alert("ERREUR FIREBASE: " + (e?.message||e?.code||String(e))); console.error(e); return; }
   showConfirm(isDistance,orderId,order);
 }
 
