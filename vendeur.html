@@ -530,7 +530,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/fireba
 import { getDatabase, ref, onValue, set, get } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 const fc={apiKey:"AIzaSyCRc2sDM4TrwjLduJT4baKbErLvdnK-fTU",authDomain:"le-nombre-vin.firebaseapp.com",databaseURL:"https://le-nombre-vin-default-rtdb.europe-west1.firebasedatabase.app",projectId:"le-nombre-vin",storageBucket:"le-nombre-vin.firebasestorage.app",messagingSenderId:"197178474175",appId:"1:197178474175:web:8824331995566c488a100a"};
 const app=initializeApp(fc);const db=getDatabase(app);
-window._db=db;window._ref=ref;window._set=set;window._get=get;
+window._db=db;window._ref=ref;window._set=set;window._get=get;window._onValue=onValue;
 document.getElementById('sync-dot').style.background='#5cb85c';
 document.getElementById('sync-lbl').textContent='Synchronisé';
 onValue(ref(db,'pending_visit'),(snap)=>{
@@ -826,6 +826,7 @@ function showF(uid,isLive){
       </tr>`).join('')}</tbody>
     </table></div>`:''}
   `;
+  setTimeout(()=>loadFicheChat(uid), 100);
 }
 
 /* CAVE */
