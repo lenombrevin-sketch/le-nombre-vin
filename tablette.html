@@ -743,25 +743,28 @@ textarea{resize:none;height:72px;margin-bottom:16px;}
   </main>
 </div>
 
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getDatabase, ref, set, get, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script>
 const fc={apiKey:"AIzaSyCRc2sDM4TrwjLduJT4baKbErLvdnK-fTU",authDomain:"le-nombre-vin.firebaseapp.com",databaseURL:"https://le-nombre-vin-default-rtdb.europe-west1.firebasedatabase.app",projectId:"le-nombre-vin",storageBucket:"le-nombre-vin.firebasestorage.app",messagingSenderId:"197178474175",appId:"1:197178474175:web:8824331995566c488a100a"};
-const app=initializeApp(fc);const db=getDatabase(app);
-window._db=db;window._ref=ref;window._set=set;window._get=get;
-onValue(ref(db,'articles'),(snap)=>{
+const _app=firebase.initializeApp(fc);
+const _db=firebase.database();
+window._db=_db;
+window._ref=function(db,path){return db.ref(path);};
+window._set=function(ref,val){return ref.set(val);};
+window._get=function(ref){return ref.once('value');};
+window._onValue=function(ref,cb){ref.on('value',cb);return function(){ref.off('value',cb);};};
+_db.ref('articles').on('value',function(snap){
   window._articles=snap.val()||{};
   if(window._nouveautesReady)loadNouveautes();
 });
-onValue(ref(db,'cave_settings'),(snap)=>{window._caveSettings=snap.val()||{};if(window._nouveautesReady)loadNouveautes();});
-onValue(ref(db,'events'),(snap)=>{
+_db.ref('cave_settings').on('value',function(snap){window._caveSettings=snap.val()||{};if(window._nouveautesReady)loadNouveautes();});
+_db.ref('events').on('value',function(snap){
   window._events=snap.val()||{};
   updateEventsBadge();
 });
-window._onValue = onValue;
 window._fbReady=true;
-// Check saved session after short delay
-setTimeout(()=>{ checkSavedSession().then(found=>{ if(!found) checkUrlParam(); }); }, 300);
+setTimeout(function(){ checkSavedSession().then(function(found){ if(!found) checkUrlParam(); }); }, 300);
 </script>
 
 <script>
