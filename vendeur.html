@@ -1448,11 +1448,14 @@ function updateVMsgBadge(){
 function rdrConversations(){
   const msgs = window._allMessages||{};
   const clients = window._clients||{};
-  const convs = Object.entries(msgs).map(([clientKey, conv])=>{
+  const convs = Object.entries(msgs).filter(([k])=>k && k!=='undefined').map(([clientKey, conv])=>{
     const list = Object.values(conv).sort((a,b)=>new Date(b.ts)-new Date(a.ts));
     const last = list[0];
     const unread = list.filter(m=>m.from==='client'&&!m.readByVendeur).length;
-    const client = clients[clientKey]||{prenom:last?.clientName||'Client', nom:'', key:clientKey};
+    // Rebuild name from clientName stored in message, but sanitize 'undefined'
+    let fallbackPrenom = last?.clientName||'';
+    if(fallbackPrenom.includes('undefined')) fallbackPrenom = '';
+    const client = clients[clientKey]||{prenom:fallbackPrenom||clientKey, nom:'', key:clientKey};
     return {clientKey, last, unread, client, count:list.length};
   }).sort((a,b)=>new Date(b.last?.ts||0)-new Date(a.last?.ts||0));
 
