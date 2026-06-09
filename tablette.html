@@ -1685,8 +1685,8 @@ async function doLoginByTel(){
   if(!tel || tel.length < 6){ alert('Merci de saisir votre numéro de téléphone.'); return; }
   if(!window._fbReady || !window._get){
     let attempts=0;
-    while(!window._fbReady && attempts<20){ await new Promise(r=>setTimeout(r,200)); attempts++; }
-    if(!window._fbReady){ alert('Connexion en cours, veuillez réessayer.'); return; }
+    while((!window._fbReady || !window._get || !window._db) && attempts<30){ await new Promise(r=>setTimeout(r,300)); attempts++; }
+    if(!window._fbReady || !window._get || !window._db){ alert('Connexion Firebase non disponible. Vérifiez votre connexion internet.'); return; }
   }
   document.getElementById('tel-not-found').style.display = 'none';
 
@@ -1713,8 +1713,10 @@ async function doLoginByTel(){
       document.getElementById('tel-not-found').style.display = 'block';
     }
   } catch(e){
-    console.error(e);
-    alert('Erreur de connexion. Identifiez-vous par nom.');
+    console.error('doLoginByTel error:', e);
+    // Show real error to help debug
+    alert('Erreur : ' + (e?.message || e?.code || String(e)) + '
+Si le problème persiste, identifiez-vous par nom/prénom.');
   }
 }
 
