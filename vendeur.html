@@ -525,15 +525,20 @@ body{background:#f7f2ea;font-family:'Lato',sans-serif;color:#2c1a08;min-height:1
   </div>
 </div>
 
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getDatabase, ref, onValue, set, get } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script>
 const fc={apiKey:"AIzaSyCRc2sDM4TrwjLduJT4baKbErLvdnK-fTU",authDomain:"le-nombre-vin.firebaseapp.com",databaseURL:"https://le-nombre-vin-default-rtdb.europe-west1.firebasedatabase.app",projectId:"le-nombre-vin",storageBucket:"le-nombre-vin.firebasestorage.app",messagingSenderId:"197178474175",appId:"1:197178474175:web:8824331995566c488a100a"};
-const app=initializeApp(fc);const db=getDatabase(app);
-window._db=db;window._ref=ref;window._set=set;window._get=get;window._onValue=onValue;
+const _app=firebase.initializeApp(fc);
+const _db=firebase.database();
+window._db=_db;
+window._ref=function(db,path){return db.ref(path);};
+window._set=function(ref,val){return ref.set(val);};
+window._get=function(ref){return ref.once('value');};
+window._onValue=function(ref,cb){ref.on('value',cb);return function(){ref.off('value',cb);};};
 document.getElementById('sync-dot').style.background='#5cb85c';
 document.getElementById('sync-lbl').textContent='Synchronisé';
-onValue(ref(db,'pending_visit'),(snap)=>{
+_db.ref('pending_visit').on('value',(snap)=>{
   window._pendingVisit=snap.val();
   rdrQ(window._pendingVisit);
   if(window._pendingVisit?.userId){
@@ -549,33 +554,33 @@ onValue(ref(db,'pending_visit'),(snap)=>{
     setTimeout(tryShow, 300);
   }
 });
-onValue(ref(db,'clients'),(snap)=>{
+_db.ref('clients').on('value',(snap)=>{
   window._clients=snap.val()||{};rdrSCards();
   if(window._currentUserId)showF(window._currentUserId,false);
 });
-onValue(ref(db,'cave_settings'),(snap)=>{
+_db.ref('cave_settings').on('value',(snap)=>{
   window._caveSettings=snap.val()||{};
   rdrSCards();
   if(document.getElementById('tab-cave').classList.contains('on')){rdrCave();rdrCaveStats();}
 });
 
-onValue(ref(db,'orders'),(snap)=>{
+_db.ref('orders').on('value',(snap)=>{
   window._orders=snap.val()||{};
   rdrOrders();
   const pending=Object.values(window._orders||{}).filter(o=>o.status==='pending').length;
   const badge=document.getElementById('orders-badge');
   if(badge){badge.style.display=pending?'inline':'none';badge.textContent=pending;}
 });
-onValue(ref(db,'articles'),(snap)=>{
+_db.ref('articles').on('value',(snap)=>{
   window._articles=snap.val()||{};
   if(document.getElementById('tab-cave').classList.contains('on'))rdrArticlesLibres();
 });
-onValue(ref(db,'messages'),(snap)=>{
+_db.ref('messages').on('value',(snap)=>{
   window._allMessages = snap.val()||{};
   updateVMsgBadge();
   if(document.getElementById('tab-messages').classList.contains('on')) rdrConversations();
 });
-onValue(ref(db,'events'),(snap)=>{
+_db.ref('events').on('value',(snap)=>{
   window._events=snap.val()||{};
   if(document.getElementById('tab-events').classList.contains('on'))rdrEventsAdmin();
 });
