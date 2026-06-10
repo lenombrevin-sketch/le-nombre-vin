@@ -337,6 +337,14 @@ button, [onclick], .chip, .bud, .mode-card, .wine-choice-card, .date-chip, .heur
 </head>
 <body>
 <div class="bg"></div>
+<div id="js-error-banner" style="display:none;position:fixed;top:0;left:0;right:0;background:#c0392b;color:#fff;padding:12px;font-size:13px;font-weight:700;z-index:9999;text-align:center;">⚠️ Erreur JS — rechargez la page</div>
+<script>
+window.onerror = function(msg, src, line, col, err){
+  var b = document.getElementById('js-error-banner');
+  if(b){ b.style.display='block'; b.textContent='⚠️ Erreur JS ligne '+line+': '+msg; }
+  return false;
+};
+</script>
 <div class="wrap">
   <div class="app-header" id="app-header" style="display:none;">
     <div style="font-family:'Playfair Display',serif;font-size:14px;color:#c9922a;letter-spacing:.02em;">Le Nombre Vin</div>
@@ -392,14 +400,14 @@ button, [onclick], .chip, .bud, .mode-card, .wine-choice-card, .date-chip, .heur
             <div class="remember-checkbox" id="remember-cb"></div>
             <div class="remember-label">Me souvenir sur cet appareil<br><span style="font-size:10px;color:rgba(201,146,42,.4);">Ne pas cocher sur la tablette du magasin</span></div>
           </div>
-          <button class="btn-main" onclick="doLogin()">Entrer →</button>
+          <button class="btn-main" onclick="if(typeof doLogin==='function'){doLogin();}else{alert('doLogin non défini - JS non chargé');}">Entrer →</button>
         </div>
 
         <!-- Form téléphone -->
         <div class="login-form-block" id="form-tel">
           <span class="lbl">Votre numéro de téléphone</span>
           <input type="tel" id="i-tel-login" placeholder="06 12 34 56 78" style="margin-bottom:14px;">
-          <button class="btn-main" onclick="doLoginByTel()">Entrer →</button>
+          <button class="btn-main" onclick="if(typeof doLoginByTel==='function'){doLoginByTel();}else{alert('doLoginByTel non défini');}">Entrer →</button>
           <div class="tel-not-found" id="tel-not-found">
             Numéro non trouvé. Identifiez-vous par nom la première fois.
           </div>
