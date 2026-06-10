@@ -363,7 +363,8 @@ window.onerror = function(msg, src, line, col, err){
   <main>
 
     <!-- LOGIN -->
-    <div id="s-login" class="scr on">
+    <div id="s-login" class="scr on" ontouchstart="var t=event.target;document.getElementById('touch-diag').textContent='Touch: '+t.tagName+' class='+t.className+' id='+t.id;">
+<div id="touch-diag" style="position:fixed;bottom:0;left:0;right:0;background:rgba(0,0,0,.8);color:#0f0;font-size:11px;padding:6px;z-index:99998;word-break:break-all;"></div>
       <div class="login-logo"><img src="logo-lnv-opt.png" alt="Le Nombre Vin"></div>
       <div class="login-tagline">Votre cave de caractère</div>
       <div class="divider"><span>Identifiez-vous</span></div>
