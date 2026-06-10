@@ -801,7 +801,7 @@ async function doLogin(){
     }
     if(!window._fbReady){ alert('Connexion en cours, veuillez réessayer.'); return; }
   }
-  const tel=document.getElementById('i-tel-new')?.value.trim()||'';
+  const tel=(document.getElementById('i-tel-new')?.value||'').trim().replace(/\s/g,'');
   await loginUser(selCivValue,p,n,tel);
 }
 async function demoLogin(){
@@ -814,7 +814,7 @@ async function loginUser(civ,p,n,tel){
   p = (p||'').trim();
   n = (n||'').trim();
   civ = civ||'M.';
-  tel = (tel||'').trim();
+  tel = (tel||'').trim().replace(/\s/g,'');
   if(!p||!n){ alert('Prénom et nom requis.'); return; }
   const key=(p+'_'+n).toLowerCase()
     .normalize('NFD').replace(/[\u0300-\u036f]/g,'')
@@ -831,6 +831,8 @@ async function loginUser(civ,p,n,tel){
     if(tel) client.tel=tel; // update if provided
   }
   curUser=client;
+  // Persist client immediately so tel and civilite are saved
+  try{ await window._set(window._ref(window._db,'clients/'+key), client); }catch(e){ console.error('loginUser save:', e); }
   document.getElementById('q-av').textContent=ini(p,n);
   document.getElementById('q-name').textContent=civ+' '+n;
   const v=client.visites||0;
