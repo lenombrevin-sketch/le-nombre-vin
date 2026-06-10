@@ -272,12 +272,12 @@ textarea{resize:none;height:72px;margin-bottom:16px;}
 .remember-label{font-size:12px;color:rgba(201,146,42,.65);line-height:1.4;}
 
 /* NOTIFICATION PUSH */
-.notif-banner{background:rgba(42,80,139,.15);border:1px solid rgba(100,140,220,.25);border-radius:12px;padding:13px 16px;margin-bottom:14px;display:flex;gap:12px;align-items:flex-start;}
-.notif-banner-icon{font-size:22px;flex-shrink:0;}
-.notif-banner-title{font-size:13px;font-weight:700;color:rgba(140,180,240,.9);margin-bottom:4px;}
-.notif-banner-sub{font-size:11px;color:rgba(140,180,240,.6);}
-.btn-allow-notif{background:rgba(42,80,139,.3);border:1px solid rgba(100,140,220,.35);border-radius:9px;padding:9px 16px;font-size:12px;font-weight:700;color:rgba(140,180,240,.9);cursor:pointer;font-family:'Lato',sans-serif;margin-top:8px;width:100%;}
-.notif-granted{font-size:11px;color:rgba(100,200,100,.7);margin-top:6px;text-align:center;}
+
+
+
+
+
+
 
 /* MES COMMANDES */
 .order-status-card{background:rgba(255,255,255,.03);border:1px solid rgba(201,146,42,.15);border-radius:14px;padding:14px 16px;margin-bottom:10px;}
@@ -436,16 +436,7 @@ window.onerror = function(msg, src, line, col, err){
         <div class="sec-lbl">Vos derniers achats</div>
         <div class="last-purchase" id="last-purchase-list"></div>
       </div>
-      <div id="notif-request-block" style="display:none;margin-bottom:12px;">
-        <div class="notif-banner">
-          <div class="notif-banner-icon">🔔</div>
-          <div style="flex:1;">
-            <div class="notif-banner-title">Restez informé de vos commandes</div>
-            <div class="notif-banner-sub">Recevez une notification dès que votre commande est acceptée ou prête</div>
-            <button class="btn-allow-notif" onclick="requestPushPermission()">Activer les notifications</button>
-            <div id="notif-status" class="notif-granted" style="display:none;">✓ Notifications activées</div>
-          </div>
-        </div>
+      
       </div>
       <div id="add-tel-block" style="display:none;margin-bottom:12px;">
         <div style="background:rgba(201,146,42,.06);border:1px solid rgba(201,146,42,.18);border-radius:13px;padding:14px 16px;">
@@ -863,8 +854,6 @@ async function loginUser(civ,p,n,tel){
   // Sauvegarder session si "se souvenir"
   await saveSession(client);
   window._nouveautesReady=true;loadNouveautes();
-  checkNotifBlock();
-  listenClientOrders();
   initChatListener();
   // Update "noter" badge
   const unscoredCount = (client.achats||[]).filter(a=>!a.clientScore).length;
@@ -1833,69 +1822,10 @@ async function checkSavedSession(){
   return false;
 }
 
-/* ── NOTIFICATIONS PUSH ── */
-async function requestPushPermission(){
-  if(!('Notification' in window)){
-    alert('Les notifications ne sont pas supportées sur cet appareil.');
-    return;
-  }
-  const perm = await Notification.requestPermission();
-  if(perm === 'granted'){
-    document.getElementById('notif-request-block').style.display='none';
-    // Save push token placeholder in client profile
-    if(curUser){
-      curUser.pushEnabled = true;
-      try{ await window._set(window._ref(window._db,'clients/'+curUser.key+'/pushEnabled'), true); }catch(e){}
-    }
-    showNotifStatus();
-  }
-}
-
-function showNotifStatus(){
-  const el = document.getElementById('notif-status');
-  if(el){ el.style.display='block'; }
-}
-
-function checkNotifBlock(){
-  const block = document.getElementById('notif-request-block');
-  if(!block) return;
-  // Show only if: saved session (personal device) + notifications not yet granted
-  const hasSession = !!loadSession();
-  const notGranted = !('Notification' in window) || Notification.permission !== 'granted';
-  block.style.display = (hasSession && notGranted) ? 'block' : 'none';
-  if(Notification.permission === 'granted'){
-    const st = document.getElementById('notif-status');
-    if(st) st.style.display='block';
-  }
-}
-
-// Send local notification (when app is open)
-function sendLocalNotif(title, body){
-  if('Notification' in window && Notification.permission==='granted'){
-    new Notification(title, {
-      body,
-      icon: 'logo-lnv-opt.png',
-      badge: 'logo-lnv-opt.png',
-    });
-  }
-}
-
 
 /* MES COMMANDES */
 window._allOrders = {};
 
-function listenClientOrders(){
-  if(!curUser || !window._db || !window._onValue) return;
-  window._onValue(window._ref(window._db, 'orders'), (snap) => {
-    const all = snap.val() || {};
-    window._allOrders = {};
-    Object.values(all).forEach(o => {
-      if(o.clientId === curUser.key) window._allOrders[o.id] = o;
-    });
-    updateCommandesBadge();
-    if(document.getElementById('s-mes-commandes').classList.contains('on')) renderMesCommandes();
-  });
-}
 
 function updateCommandesBadge(){
   const orders = Object.values(window._allOrders||{});
@@ -2144,7 +2074,7 @@ document.addEventListener('DOMContentLoaded', function(){
 
 window.doLogin=doLogin;window.demoLogin=demoLogin;window.doReset=doReset;window.doSubmit=doSubmit;
 window.sel=sel;window.selBud=selBud;window.selCiv=selCiv;window.selMode=selMode;window.doMode=doMode;
-window.afterQuestions=afterQuestions;window.setScore=setScore;window.submitScore=submitScore;window.openScoring=openScoring;window.showMesAvis=showMesAvis;window.loadEvents=loadEvents;window.filterEvts=filterEvts;window.inscrireEvent=inscrireEvent;window.showMaCave=showMaCave;window.doQuit=doQuit;window.confirmQuit=confirmQuit;window.cancelQuit=cancelQuit;window.updateHeader=updateHeader;window.emailSuiviLink=emailSuiviLink;window.selLoginMode=selLoginMode;window.toggleRemember=toggleRemember;window.buildHeureGrid=buildHeureGrid;window.showMesCommandes=showMesCommandes;window.showMessages=showMessages;window.sendClientMessage=sendClientMessage;window.attachChatPhoto=attachChatPhoto;window.removeChatPhoto=removeChatPhoto;window.autoResizeChat=autoResizeChat;window.requestPushPermission=requestPushPermission;window.doLoginByTel=doLoginByTel;window.searchCaveWine=searchCaveWine;window.selectCaveWine=selectCaveWine;window.setAddScore=setAddScore;window.cancelCaveAdd=cancelCaveAdd;window.addToCavePerso=addToCavePerso;window.filterCave=filterCave;window.openPersonalScoring=openPersonalScoring;window.doWineChoice=doWineChoice;window.selectWineChoice=selectWineChoice;window.selectWineChoiceByIdx=selectWineChoiceByIdx;window.buildWineChoices=buildWineChoices;window.selHeure=selHeure;window.showScr=showScr;window.copyLink=copyLink;
+window.afterQuestions=afterQuestions;window.setScore=setScore;window.submitScore=submitScore;window.openScoring=openScoring;window.showMesAvis=showMesAvis;window.loadEvents=loadEvents;window.filterEvts=filterEvts;window.inscrireEvent=inscrireEvent;window.showMaCave=showMaCave;window.doQuit=doQuit;window.confirmQuit=confirmQuit;window.cancelQuit=cancelQuit;window.updateHeader=updateHeader;window.emailSuiviLink=emailSuiviLink;window.selLoginMode=selLoginMode;window.toggleRemember=toggleRemember;window.buildHeureGrid=buildHeureGrid;window.showMesCommandes=showMesCommandes;window.showMessages=showMessages;window.sendClientMessage=sendClientMessage;window.attachChatPhoto=attachChatPhoto;window.removeChatPhoto=removeChatPhoto;window.autoResizeChat=autoResizeChat;window.doLoginByTel=doLoginByTel;window.searchCaveWine=searchCaveWine;window.selectCaveWine=selectCaveWine;window.setAddScore=setAddScore;window.cancelCaveAdd=cancelCaveAdd;window.addToCavePerso=addToCavePerso;window.filterCave=filterCave;window.openPersonalScoring=openPersonalScoring;window.doWineChoice=doWineChoice;window.selectWineChoice=selectWineChoice;window.selectWineChoiceByIdx=selectWineChoiceByIdx;window.buildWineChoices=buildWineChoices;window.selHeure=selHeure;window.showScr=showScr;window.copyLink=copyLink;
 </script>
 <script src="https://cdn.jsdelivr.net/npm/eruda@3/eruda.min.js"></script>
 <script>eruda.init();</script>
