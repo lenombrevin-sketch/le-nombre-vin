@@ -2155,8 +2155,8 @@ function bindLoginButtons(){
   var btnTel = document.getElementById('btn-entrer-tel');
   var civM = document.getElementById('civ-m');
   var civMme = document.getElementById('civ-mme');
-  if(btnNom) btnNom.addEventListener('touchend', function(e){ e.preventDefault(); doLogin(); }, {passive:false});
-  if(btnNom) btnNom.addEventListener('click', function(){ doLogin(); });
+  if(btnNom) btnNom.addEventListener('touchend', function(e){ e.preventDefault(); alert('touchend OK - doLogin call'); doLogin(); }, {passive:false});
+  if(btnNom) btnNom.addEventListener('click', function(){ alert('click OK'); doLogin(); });
   if(btnTel) btnTel.addEventListener('touchend', function(e){ e.preventDefault(); doLoginByTel(); }, {passive:false});
   if(btnTel) btnTel.addEventListener('click', function(){ doLoginByTel(); });
   if(civM) civM.addEventListener('touchend', function(e){ e.preventDefault(); selCiv(this,'M.'); }, {passive:false});
