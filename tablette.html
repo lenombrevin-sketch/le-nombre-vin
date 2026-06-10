@@ -363,8 +363,7 @@ window.onerror = function(msg, src, line, col, err){
   <main>
 
     <!-- LOGIN -->
-    <div id="s-login" class="scr on" ontouchstart="var t=event.target;document.getElementById('touch-diag').textContent='Touch: '+t.tagName+' class='+t.className+' id='+t.id;">
-<div id="touch-diag" style="position:fixed;bottom:0;left:0;right:0;background:rgba(0,0,0,.8);color:#0f0;font-size:11px;padding:6px;z-index:99998;word-break:break-all;"></div>
+    <div id="s-login" class="scr on">
       <div class="login-logo"><img src="logo-lnv-opt.png" alt="Le Nombre Vin"></div>
       <div class="login-tagline">Votre cave de caractère</div>
       <div class="divider"><span>Identifiez-vous</span></div>
@@ -387,8 +386,8 @@ window.onerror = function(msg, src, line, col, err){
         <div class="login-form-block on" id="form-nom">
           <span class="lbl">Civilité</span>
           <div class="civ-group" id="civ-group">
-            <button class="civ-btn" onclick="selCiv(this,'M.')">Monsieur</button>
-            <button class="civ-btn" onclick="selCiv(this,'Mme')">Madame</button>
+            <button class="civ-btn" id="civ-m">Monsieur</button>
+            <button class="civ-btn" id="civ-mme">Madame</button>
           </div>
           <span class="lbl">Prénom et nom</span>
           <div class="row">
@@ -401,14 +400,14 @@ window.onerror = function(msg, src, line, col, err){
             <div class="remember-checkbox" id="remember-cb"></div>
             <div class="remember-label">Me souvenir sur cet appareil<br><span style="font-size:10px;color:rgba(201,146,42,.4);">Ne pas cocher sur la tablette du magasin</span></div>
           </div>
-          <button class="btn-main" onclick="if(typeof doLogin==='function'){doLogin();}else{alert('doLogin non défini - JS non chargé');}">Entrer →</button>
+          <button class="btn-main" id="btn-entrer-nom">Entrer →</button>
         </div>
 
         <!-- Form téléphone -->
         <div class="login-form-block" id="form-tel">
           <span class="lbl">Votre numéro de téléphone</span>
           <input type="tel" id="i-tel-login" placeholder="06 12 34 56 78" style="margin-bottom:14px;">
-          <button class="btn-main" onclick="if(typeof doLoginByTel==='function'){doLoginByTel();}else{alert('doLoginByTel non défini');}">Entrer →</button>
+          <button class="btn-main" id="btn-entrer-tel">Entrer →</button>
           <div class="tel-not-found" id="tel-not-found">
             Numéro non trouvé. Identifiez-vous par nom la première fois.
           </div>
@@ -2149,5 +2148,27 @@ window.afterQuestions=afterQuestions;window.setScore=setScore;window.submitScore
 </script>
 <script src="https://cdn.jsdelivr.net/npm/eruda@3/eruda.min.js"></script>
 <script>eruda.init();</script>
+<script>
+// Bind login buttons via addEventListener (more reliable than onclick on iOS)
+function bindLoginButtons(){
+  var btnNom = document.getElementById('btn-entrer-nom');
+  var btnTel = document.getElementById('btn-entrer-tel');
+  var civM = document.getElementById('civ-m');
+  var civMme = document.getElementById('civ-mme');
+  if(btnNom) btnNom.addEventListener('touchend', function(e){ e.preventDefault(); doLogin(); }, {passive:false});
+  if(btnNom) btnNom.addEventListener('click', function(){ doLogin(); });
+  if(btnTel) btnTel.addEventListener('touchend', function(e){ e.preventDefault(); doLoginByTel(); }, {passive:false});
+  if(btnTel) btnTel.addEventListener('click', function(){ doLoginByTel(); });
+  if(civM) civM.addEventListener('touchend', function(e){ e.preventDefault(); selCiv(this,'M.'); }, {passive:false});
+  if(civM) civM.addEventListener('click', function(){ selCiv(this,'M.'); });
+  if(civMme) civMme.addEventListener('touchend', function(e){ e.preventDefault(); selCiv(this,'Mme'); }, {passive:false});
+  if(civMme) civMme.addEventListener('click', function(){ selCiv(this,'Mme'); });
+}
+if(document.readyState === 'loading'){
+  document.addEventListener('DOMContentLoaded', bindLoginButtons);
+} else {
+  bindLoginButtons();
+}
+</script>
 </body>
 </html>
