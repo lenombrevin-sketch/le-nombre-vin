@@ -439,6 +439,15 @@ button, [onclick], .chip, .bud, .mode-card, .wine-choice-card, .date-chip, .heur
           </div>
         </div>
       </div>
+      <div id="add-tel-block" style="display:none;margin-bottom:12px;">
+        <div style="background:rgba(201,146,42,.06);border:1px solid rgba(201,146,42,.18);border-radius:13px;padding:14px 16px;">
+          <div style="font-size:12px;color:rgba(201,146,42,.7);margin-bottom:8px;">📱 Ajoutez votre numéro pour une connexion rapide lors de vos prochaines visites</div>
+          <div style="display:flex;gap:8px;">
+            <input type="tel" id="add-tel-input" placeholder="06 12 34 56 78" style="flex:1;background:rgba(255,255,255,.06);border:1px solid rgba(201,146,42,.25);border-radius:9px;padding:10px 12px;font-size:13px;color:#f0e6d0;font-family:'Lato',sans-serif;outline:none;">
+            <button type="button" onclick="saveTel()" style="background:#8B4513;border:none;border-radius:9px;padding:10px 16px;font-size:12px;font-weight:700;color:#fff8ee;cursor:pointer;font-family:'Lato',sans-serif;touch-action:manipulation;white-space:nowrap;">Enregistrer</button>
+          </div>
+        </div>
+      </div>
       <button class="btn-main" onclick="showScr('s-mode')" style="margin-top:auto;">Passer ma commande →</button>
       <button class="btn-mes-avis" onclick="showMessages()" style="margin-top:6px;background:rgba(80,40,10,.15);border-color:rgba(201,146,42,.25);color:rgba(201,146,42,.8);">&#128172; &nbsp;Messages <span id="msg-badge" style="display:none;background:#c0392b;color:#fff;border-radius:100px;padding:1px 7px;font-size:10px;font-weight:700;"></span></button>
       <button class="btn-mes-avis" onclick="showMesCommandes()" style="margin-top:6px;background:rgba(42,80,139,.1);border-color:rgba(100,140,220,.2);color:rgba(140,180,240,.8);">&#128230; &nbsp;Mes commandes <span id="commandes-badge" style="display:none;background:#c9922a;color:#0a0604;border-radius:100px;padding:1px 7px;font-size:10px;font-weight:700;"></span></button>
@@ -860,6 +869,21 @@ async function loginUser(civ,p,n,tel){
   if(badge){badge.style.display=unscoredCount?'inline':'none';badge.textContent=unscoredCount;}
   showScr('s-welcome');
   updateHeader();
+  // Show add-tel block if no tel registered
+  const addTelBlock = document.getElementById('add-tel-block');
+  if(addTelBlock) addTelBlock.style.display = client.tel ? 'none' : 'block';
+}
+
+async function saveTel(){
+  const tel = (document.getElementById('add-tel-input')?.value||'').trim().replace(/\s/g,'');
+  if(!tel){ alert('Merci de saisir un numéro.'); return; }
+  if(!curUser){ return; }
+  curUser.tel = tel;
+  try{
+    await window._set(window._ref(window._db,'clients/'+curUser.key+'/tel'), tel);
+    document.getElementById('add-tel-block').style.display = 'none';
+    alert('✓ Numéro enregistré !');
+  } catch(e){ alert('Erreur : ' + (e?.message||String(e))); }
 }
 
 function loadNouveautes(){
