@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Le Nombre Vin">
@@ -36,7 +36,7 @@ input:focus,select:focus,textarea:focus{border-color:rgba(201,146,42,.55);backgr
 input::placeholder,textarea::placeholder{color:rgba(201,146,42,.2);}
 select option{background:#1a0e04;color:#f0e6d0;}
 .civ-group{display:flex;gap:10px;margin-bottom:16px;}
-.civ-btn{flex:1;background:rgba(255,255,255,.03);border:1px solid rgba(201,146,42,.2);border-radius:11px;padding:12px;font-size:13px;color:rgba(201,146,42,.6);cursor:pointer;font-family:'Lato',sans-serif;transition:all .2s;text-align:center;}
+.civ-btn{flex:1;background:rgba(255,255,255,.03);border:1px solid rgba(201,146,42,.2);border-radius:11px;padding:12px;font-size:13px;color:rgba(201,146,42,.6);cursor:pointer;font-family:'Lato',sans-serif;transition:all .2s;text-align:center;touch-action:manipulation;-webkit-tap-highlight-color:rgba(201,146,42,.2);}
 .civ-btn.on{background:rgba(139,69,19,.35);border-color:#c9922a;color:#f0e6d0;font-weight:700;}
 
 /* MODE selector */
@@ -47,7 +47,7 @@ select option{background:#1a0e04;color:#f0e6d0;}
 .mode-title{font-size:13px;font-weight:700;color:#f0e6d0;margin-bottom:4px;}
 .mode-sub{font-size:11px;color:rgba(201,146,42,.5);line-height:1.4;}
 
-.btn-main{width:100%;background:#8B4513;border:none;border-radius:13px;padding:17px;font-size:14px;font-weight:700;color:#fff8ee;cursor:pointer;letter-spacing:.08em;text-transform:uppercase;font-family:'Lato',sans-serif;transition:opacity .2s;margin-top:4px;}
+.btn-main{width:100%;background:#8B4513;border:none;border-radius:13px;padding:17px;font-size:14px;font-weight:700;color:#fff8ee;cursor:pointer;letter-spacing:.08em;text-transform:uppercase;font-family:'Lato',sans-serif;transition:opacity .2s;margin-top:4px;touch-action:manipulation;-webkit-tap-highlight-color:transparent;}
 .btn-main:active{opacity:.85;}
 .btn-ghost{background:transparent;border:1px solid rgba(201,146,42,.2);border-radius:10px;padding:10px 22px;font-size:12px;color:rgba(201,146,42,.6);cursor:pointer;font-family:'Lato',sans-serif;display:block;margin:10px auto 0;}
 
@@ -327,6 +327,12 @@ textarea{resize:none;height:72px;margin-bottom:16px;}
 .btn-photo-attach{background:transparent;border:1px solid rgba(201,146,42,.2);border-radius:10px;padding:10px 12px;font-size:16px;cursor:pointer;flex-shrink:0;}
 .msg-empty{text-align:center;padding:32px 16px;color:rgba(201,146,42,.35);font-size:13px;}
 .msg-empty-icon{font-size:36px;margin-bottom:10px;}
+
+/* iOS touch fix */
+button, [onclick], .chip, .bud, .mode-card, .wine-choice-card, .date-chip, .heure-chip, .achat-item, .login-mode-card {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
 </style>
 </head>
 <body>
@@ -356,16 +362,16 @@ textarea{resize:none;height:72px;margin-bottom:16px;}
       <div class="card">
         <!-- Choix mode identification -->
         <div class="login-mode-grid">
-          <div class="login-mode-card on" id="lm-nom" onclick="selLoginMode('nom')">
+          <button class="login-mode-card on" id="lm-nom" onclick="selLoginMode('nom')" type="button">
             <span class="lmc-icon">✍️</span>
             <div class="lmc-title">Nom &amp; prénom</div>
             <div class="lmc-sub">Première visite ou nouveau client</div>
-          </div>
-          <div class="login-mode-card" id="lm-tel" onclick="selLoginMode('tel')">
+          </button>
+          <button class="login-mode-card" id="lm-tel" onclick="selLoginMode('tel')" type="button">
             <span class="lmc-icon">📱</span>
             <div class="lmc-title">Téléphone</div>
             <div class="lmc-sub">Accès rapide si déjà client</div>
-          </div>
+          </button>
         </div>
 
         <!-- Form nom/prénom -->
@@ -1718,8 +1724,7 @@ async function doLoginByTel(){
   } catch(e){
     console.error('doLoginByTel error:', e);
     // Show real error to help debug
-    alert('Erreur : ' + (e?.message || e?.code || String(e)) + '
-Si le problème persiste, identifiez-vous par nom/prénom.');
+    alert('Erreur : ' + (e?.message || e?.code || String(e)));
   }
 }
 
