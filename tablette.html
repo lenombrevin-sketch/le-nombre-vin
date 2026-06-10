@@ -337,14 +337,6 @@ button, [onclick], .chip, .bud, .mode-card, .wine-choice-card, .date-chip, .heur
 </head>
 <body>
 <div class="bg"></div>
-<div id="js-error-banner" style="display:none;position:fixed;top:0;left:0;right:0;background:#c0392b;color:#fff;padding:12px;font-size:13px;font-weight:700;z-index:9999;text-align:center;">⚠️ Erreur JS — rechargez la page</div>
-<script>
-window.onerror = function(msg, src, line, col, err){
-  var b = document.getElementById('js-error-banner');
-  if(b){ b.style.display='block'; b.textContent='⚠️ Erreur JS ligne '+line+': '+msg; }
-  return false;
-};
-</script>
 <div class="wrap">
   <div class="app-header" id="app-header" style="display:none;">
     <div style="font-family:'Playfair Display',serif;font-size:14px;color:#c9922a;letter-spacing:.02em;">Le Nombre Vin</div>
@@ -2076,8 +2068,6 @@ window.doLogin=doLogin;window.demoLogin=demoLogin;window.doReset=doReset;window.
 window.sel=sel;window.selBud=selBud;window.selCiv=selCiv;window.selMode=selMode;window.doMode=doMode;
 window.afterQuestions=afterQuestions;window.setScore=setScore;window.submitScore=submitScore;window.openScoring=openScoring;window.showMesAvis=showMesAvis;window.loadEvents=loadEvents;window.filterEvts=filterEvts;window.inscrireEvent=inscrireEvent;window.showMaCave=showMaCave;window.doQuit=doQuit;window.confirmQuit=confirmQuit;window.cancelQuit=cancelQuit;window.updateHeader=updateHeader;window.emailSuiviLink=emailSuiviLink;window.selLoginMode=selLoginMode;window.toggleRemember=toggleRemember;window.buildHeureGrid=buildHeureGrid;window.showMesCommandes=showMesCommandes;window.showMessages=showMessages;window.sendClientMessage=sendClientMessage;window.attachChatPhoto=attachChatPhoto;window.removeChatPhoto=removeChatPhoto;window.autoResizeChat=autoResizeChat;window.doLoginByTel=doLoginByTel;window.searchCaveWine=searchCaveWine;window.selectCaveWine=selectCaveWine;window.setAddScore=setAddScore;window.cancelCaveAdd=cancelCaveAdd;window.addToCavePerso=addToCavePerso;window.filterCave=filterCave;window.openPersonalScoring=openPersonalScoring;window.doWineChoice=doWineChoice;window.selectWineChoice=selectWineChoice;window.selectWineChoiceByIdx=selectWineChoiceByIdx;window.buildWineChoices=buildWineChoices;window.selHeure=selHeure;window.showScr=showScr;window.copyLink=copyLink;
 </script>
-<script src="https://cdn.jsdelivr.net/npm/eruda@3/eruda.min.js"></script>
-<script>eruda.init();</script>
 <script>
 // Bind login buttons via addEventListener (more reliable than onclick on iOS)
 function bindLoginButtons(){
@@ -2085,8 +2075,8 @@ function bindLoginButtons(){
   var btnTel = document.getElementById('btn-entrer-tel');
   var civM = document.getElementById('civ-m');
   var civMme = document.getElementById('civ-mme');
-  if(btnNom) btnNom.addEventListener('touchend', function(e){ e.preventDefault(); alert('touchend OK - doLogin call'); doLogin(); }, {passive:false});
-  if(btnNom) btnNom.addEventListener('click', function(){ alert('click OK'); doLogin(); });
+  if(btnNom) btnNom.addEventListener('touchend', function(e){ e.preventDefault(); doLogin(); }, {passive:false});
+  if(btnNom) btnNom.addEventListener('click', function(){ doLogin(); });
   if(btnTel) btnTel.addEventListener('touchend', function(e){ e.preventDefault(); doLoginByTel(); }, {passive:false});
   if(btnTel) btnTel.addEventListener('click', function(){ doLoginByTel(); });
   if(civM) civM.addEventListener('touchend', function(e){ e.preventDefault(); selCiv(this,'M.'); }, {passive:false});
